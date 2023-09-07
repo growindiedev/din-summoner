@@ -1,28 +1,36 @@
-import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
-import { H2, Link, ParMd, SingleColumnLayout } from "@daohaus/ui";
-import { HausAnimated } from "../components/HausAnimated";
-import { StyledRouterLink } from "../components/Layout";
+import { FormBuilder } from "@daohaus/form-builder";
+import { APP_FORM } from "../legos/forms";
+import { AppFieldLookup } from "../legos/fieldConfig";
+import { useDHConnect } from "@daohaus/connect";
 
-const LinkBox = styled.div`
-  display: flex;
-  width: 50%;
-  justify-content: space-between;
-`;
+const Home = () => {
+  const navigate = useNavigate();
+  const { chainId } = useDHConnect();
 
-export const Home = () => {
+  const onFormComplete = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    result: any
+  ) => {
+    const daoAddress = result?.data?.transaction?.daoAddress;
+    navigate(`/success/${daoAddress}`);
+  };
+
+  // todo: check chainId here is a valid one
+
   return (
-    <SingleColumnLayout>
-      <H2>DAOhaus is your haus</H2>
-      <HausAnimated />
-      <ParMd style={{ marginBottom: "2.4rem" }}>
-        Get started by editing src/pages/Home.tsx
-      </ParMd>
-      <LinkBox>
-        <Link href="https://github.com/HausDAO/monorepo">Github</Link>
-        <Link href="https://admin.daohaus.fun/">Admin</Link>
-        <StyledRouterLink to="/formtest">Example Form</StyledRouterLink>
-      </LinkBox>
-    </SingleColumnLayout>
+    <FormBuilder
+      form={APP_FORM.SUMMON_RDF}
+      customFields={AppFieldLookup}
+      targetNetwork={chainId}
+      lifeCycleFns={{
+        onPollSuccess: (result) => {
+          onFormComplete(result);
+        },
+      }}
+    />
   );
 };
+
+export default Home;
