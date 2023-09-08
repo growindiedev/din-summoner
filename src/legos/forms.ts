@@ -2,9 +2,10 @@ import { CustomFormLego } from "./fieldConfig";
 import { APP_FIELD } from "./fields";
 import { APP_TX } from "./tx";
 
-// todo: support a link under description
+// todo: support a link under description - do on page
 // description font is data instead of body
 // custom nft collection field
+// move submitButtonText to lego level in package
 
 export const APP_FORM: Record<string, CustomFormLego> = {
   SUMMON_RDF: {
