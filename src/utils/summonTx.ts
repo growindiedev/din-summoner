@@ -121,7 +121,8 @@ const assembleShamanParams = ({
 }) => {
   const nftAddress = formValues["nftContractAddress"];
   const registryAddress = SILO_CONTRACTS["TBA_REGISTRY"][chainId];
-  const tbaImplementationAddress = SILO_CONTRACTS["TBA_REGISTRY"][chainId];
+  const tbaImplementationAddress =
+    SILO_CONTRACTS["TBA_IMPLEMENTATION"][chainId];
   const lootPerNft = formValues["lootPerNft"];
   const claimShamanSingleton =
     SILO_CONTRACTS["CLAIM_SHAMAN_SINGLETON"][chainId];
