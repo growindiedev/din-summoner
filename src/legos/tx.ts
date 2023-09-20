@@ -16,36 +16,10 @@ export enum ProposalTypeIds {
 }
 
 export const APP_TX = {
-  POST_SIGNAL: buildMultiCallTX({
-    id: "POST_SIGNAL",
-    JSONDetails: {
-      type: "JSONDetails",
-      jsonSchema: {
-        title: `.formValues.title`,
-        description: `.formValues.description`,
-        contentURI: `.formValues.link`,
-        contentURIType: { type: "static", value: "url" },
-        proposalType: { type: "static", value: ProposalTypeIds.Signal },
-      },
-    },
-    actions: [
-      {
-        contract: APP_CONTRACT.POSTER,
-        method: "post",
-        args: [
-          {
-            type: "JSONDetails",
-            jsonSchema: {
-              title: `.formValues.title`,
-              description: `.formValues.description`,
-              contentURI: `.formValues.link`,
-              contentURIType: { type: "static", value: "url" },
-              proposalType: { type: "static", value: ProposalTypeIds.Signal },
-            },
-          },
-          { type: "static", value: POSTER_TAGS.signalProposal },
-        ],
-      },
-    ],
-  }),
+  CLAIM_SUMMON: {
+    id: "CLAIM_SUMMON",
+    contract: APP_CONTRACT.CLAIM_SUMMONER,
+    method: "summonBaalFromReferrer",
+    argCallback: "assembleFixedLootSummonerArgs",
+  },
 };
