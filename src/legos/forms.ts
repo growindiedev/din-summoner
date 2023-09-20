@@ -18,12 +18,15 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       daoName: true,
       lootTokenName: true,
       lootTokenSymbol: true,
-      lootTokenSupply: true,
-      lootTokenAllocation: true,
+      // lootTokenSupply: true,
+      // lootTokenAllocation: true,
+      lootToShaman: true,
+      lootToVault: true,
       nftContractAddress: true,
+      lootPerNft: true,
     },
     log: true,
-    tx: APP_TX.POST_SIGNAL,
+    tx: APP_TX.CLAIM_SUMMON,
     fields: [
       {
         id: "nameSegment",
@@ -98,18 +101,46 @@ export const APP_FORM: Record<string, CustomFormLego> = {
                   {
                     rowId: "row2",
                     left: {
-                      id: "lootTokenSupply",
+                      id: "lootToShaman",
                       type: "input",
-                      label: "Meme Token Supply",
-                      placeholder: "69,420,000",
+                      label: "Meme Token for Claim",
+                      placeholder: "69,420",
                       expectType: "number",
                     },
                     right: {
-                      id: "lootTokenAllocation",
+                      id: "lootToVault",
                       type: "input",
-                      label: "Holder Allocation %",
-                      placeholder: "30",
-                      expectType: "percent",
+                      label: "Meme Token to Vault",
+                      placeholder: "69,420,000",
+                      expectType: "number",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "lootPerNftSegment",
+            type: "formSegment",
+            showDivider: false,
+            fields: [
+              {
+                id: "lootPerNftRow",
+                type: "splitColumn",
+                rows: [
+                  {
+                    rowId: "row3",
+                    left: {
+                      id: "lootPerNft",
+                      type: "input",
+                      label: "Loot Per Nft",
+                      placeholder: "100",
+                      expectType: "number",
+                    },
+                    right: {
+                      id: "dummy",
+                      type: "input",
+                      label: "don't fill this out (temp)",
                     },
                   },
                 ],
@@ -129,3 +160,34 @@ export const APP_FORM: Record<string, CustomFormLego> = {
     ],
   },
 };
+
+// {
+//   id: "supplyAllocationSegment",
+//   type: "formSegment",
+//   showDivider: false,
+//   fields: [
+//     {
+//       id: "supplyAllocation",
+//       type: "splitColumn",
+//       rows: [
+//         {
+//           rowId: "row2",
+//           left: {
+//             id: "lootTokenSupply",
+//             type: "input",
+//             label: "Meme Token Supply",
+//             placeholder: "69,420,000",
+//             expectType: "number",
+//           },
+//           right: {
+//             id: "lootTokenAllocation",
+//             type: "input",
+//             label: "Holder Allocation %",
+//             placeholder: "30",
+//             expectType: "percent",
+//           },
+//         },
+//       ],
+//     },
+//   ],
+// },
