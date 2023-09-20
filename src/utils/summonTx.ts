@@ -167,7 +167,7 @@ const assembleInitActions = ({
   const { POSTER } = handleKeychains(chainId);
 
   return [
-    tokenConfigTX(DEFAULT_SUMMON_VALUES),
+    // tokenConfigTX(DEFAULT_SUMMON_VALUES),
     governanceConfigTX(DEFAULT_SUMMON_VALUES),
     metadataConfigTX(formValues, POSTER),
   ];
