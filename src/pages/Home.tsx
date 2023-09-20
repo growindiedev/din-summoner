@@ -14,7 +14,7 @@ const Home = () => {
     result: any
   ) => {
     console.log("result", result);
-    const daoAddress = result?.data?.transaction?.daoAddress;
+    const daoAddress = result?.items[0]?.id;
     navigate(`/success/${daoAddress}`);
   };
 
