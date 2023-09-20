@@ -1,6 +1,7 @@
 import { POSTER_TAGS } from "@daohaus/utils";
 import { buildMultiCallTX } from "@daohaus/tx-builder";
 import { APP_CONTRACT } from "./contract";
+import { pollLastTXSilo, testLastTXSilo } from "../utils/customTxPoll";
 
 export enum ProposalTypeIds {
   Signal = "SIGNAL",
@@ -21,5 +22,9 @@ export const APP_TX = {
     contract: APP_CONTRACT.CLAIM_SUMMONER,
     method: "summonBaalFromReferrer",
     argCallback: "assembleFixedLootSummonerArgs",
+    customPoll: {
+      fetch: pollLastTXSilo,
+      test: testLastTXSilo,
+    },
   },
 };

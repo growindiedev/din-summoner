@@ -102,14 +102,14 @@ export const APP_FORM: Record<string, CustomFormLego> = {
                     rowId: "row2",
                     left: {
                       id: "lootToShaman",
-                      type: "input",
+                      type: "toWeiInput",
                       label: "Meme Token for Claim",
                       placeholder: "69,420",
                       expectType: "number",
                     },
                     right: {
                       id: "lootToVault",
-                      type: "input",
+                      type: "toWeiInput",
                       label: "Meme Token to Vault",
                       placeholder: "69,420,000",
                       expectType: "number",
@@ -132,7 +132,7 @@ export const APP_FORM: Record<string, CustomFormLego> = {
                     rowId: "row3",
                     left: {
                       id: "lootPerNft",
-                      type: "input",
+                      type: "toWeiInput",
                       label: "Loot Per Nft",
                       placeholder: "100",
                       expectType: "number",
