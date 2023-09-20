@@ -5,6 +5,7 @@ import { DaoHausNav, useDHConnect } from "@daohaus/connect";
 import { TXBuilder } from "@daohaus/tx-builder";
 import { Footer, MainLayout, OuterLayout, widthQuery } from "@daohaus/ui";
 import { Brand } from "./Brand";
+import { assembleFixedLootSummonerArgs } from "../utils/summonTx";
 
 const Header = styled.div`
   display: flex;
@@ -30,6 +31,9 @@ export const LayoutContainer = () => {
       publicClient={publicClient}
       chainId={chainId}
       appState={{ memberAddress: address }}
+      argCallbackRecord={{
+        assembleFixedLootSummonerArgs: assembleFixedLootSummonerArgs,
+      }}
     >
       <OuterLayout>
         <Header>

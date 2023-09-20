@@ -117,6 +117,15 @@
   },
   {
     "inputs": [],
+    "name": "_baalSummonerAddress",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "baalSummoner", "type": "address" }
+    ],
     "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -146,19 +155,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "baalAndVaultSummoner",
-        "type": "address"
-      }
-    ],
-    "name": "setUp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes",
         "name": "initializationLootTokenParams",
         "type": "bytes"
@@ -177,7 +173,8 @@
         "internalType": "bytes[]",
         "name": "postInitializationActions",
         "type": "bytes[]"
-      }
+      },
+      { "internalType": "uint256", "name": "saltNonce", "type": "uint256" }
     ],
     "name": "summonBaalFromReferrer",
     "outputs": [],

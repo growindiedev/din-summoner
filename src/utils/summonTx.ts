@@ -22,6 +22,41 @@ import {
   SILO_CONTRACTS,
 } from "./constants";
 
+export const assembleFixedLootSummonerArgs = (args: ArbitraryState) => {
+  const formValues = args.appState.formValues as Record<string, unknown>;
+  const chainId = args.chainId as ValidNetwork;
+
+  const initializationLootTokenParams = assembleLootTokenParams({
+    formValues,
+    chainId,
+  });
+
+  const initializationShareTokenParams = assembleShareTokenParams({
+    chainId,
+  });
+
+  const initializationShamanParams = assembleShamanParams({
+    formValues,
+    chainId,
+  });
+
+  const postInitializationActions = assembleInitActions({
+    formValues,
+    chainId,
+  });
+
+  const txArgs = [
+    initializationLootTokenParams,
+    initializationShareTokenParams,
+    initializationShamanParams,
+    postInitializationActions,
+    getNonce(),
+  ];
+  console.log("txArgs", txArgs);
+
+  return txArgs;
+};
+
 const assembleLootTokenParams = ({
   formValues,
   chainId,
@@ -29,9 +64,9 @@ const assembleLootTokenParams = ({
   formValues: Record<string, unknown>;
   chainId: ValidNetwork;
 }) => {
-  const tokenName = formValues["tokenName"];
-  const tokenSymbol = formValues["tokenSymbol"];
-  const lootSingleton = SILO_CONTRACTS["FIXED_LOOT_SUMMONER"][chainId];
+  const tokenName = formValues["lootTokenName"];
+  const tokenSymbol = formValues["lootTokenSymbol"];
+  const lootSingleton = SILO_CONTRACTS["FIXED_LOOT_SINGLETON"][chainId];
   const initialHolders = [] as EthAddress[];
   const lootToShaman = formValues["lootToShaman"];
   const lootToVault = formValues["lootToVault"];
@@ -136,41 +171,6 @@ const assembleInitActions = ({
     governanceConfigTX(DEFAULT_SUMMON_VALUES),
     metadataConfigTX(formValues, POSTER),
   ];
-};
-
-export const assembleFixedLootSummonerArgs = (args: ArbitraryState) => {
-  const formValues = args.appState.formValues as Record<string, unknown>;
-  const chainId = args.chainId as ValidNetwork;
-
-  const initializationLootTokenParams = assembleLootTokenParams({
-    formValues,
-    chainId,
-  });
-
-  const initializationShareTokenParams = assembleShareTokenParams({
-    chainId,
-  });
-
-  const initializationShamanParams = assembleShamanParams({
-    formValues,
-    chainId,
-  });
-
-  const postInitializationActions = assembleInitActions({
-    formValues,
-    chainId,
-  });
-
-  const txArgs = [
-    initializationLootTokenParams,
-    initializationShareTokenParams,
-    initializationShamanParams,
-    postInitializationActions,
-    getNonce(),
-  ];
-  console.log("txArgs", txArgs);
-
-  return txArgs;
 };
 
 const governanceConfigTX = (formValues: SummonParams) => {
