@@ -153,8 +153,8 @@ const assembleShamanParams = ({
   );
 
   return encodeValues(
-    ["address", "uint256", "bytes"],
-    [claimShamanSingleton, CLAIM_SHAMAN_PERMISSIONS, shamanParams]
+    ["address[]", "uint256[]", "bytes[]"],
+    [[claimShamanSingleton], [CLAIM_SHAMAN_PERMISSIONS], [shamanParams]]
   );
 };
 
