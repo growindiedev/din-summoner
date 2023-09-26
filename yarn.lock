@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@0xsequence/metadata@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@0xsequence/metadata/-/metadata-1.2.3.tgz#0fe1689b10911e2c5e41790838c4e78255355b90"
+  integrity sha512-38YZUq0oHxP8EGNp8BvNuLHTnRpJOrXDNiYRljIKr3bIdDc89Xe6vw4GGNNv6JzWS1e+u782E3F89hFfctvzyg==
+
 "@adraffy/ens-normalize@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.9.0.tgz#223572538f6bea336750039bb43a4016dcc8182d"
