@@ -33,14 +33,15 @@ export const SILO_CONTRACTS: KeychainList = {
 export const SHARE_PER_NFT = "1000000000000000000";
 export const CLAIM_SHAMAN_PERMISSIONS = "2";
 export const SHARE_NAME = "vNFT";
-export const SHARE_SYMBOL = "NFT";
+export const SHARE_SYMBOL = "Vote NFT";
 export const DEFAULT_SUMMON_VALUES = {
-  votingPeriodInSeconds: 259200,
-  //   votingPeriodInSeconds: 120,
-  gracePeriodInSeconds: 172800,
-  //   gracePeriodInSeconds: 60,
+  //   votingPeriodInSeconds: 259200,
+  votingPeriodInSeconds: 120,
+  //   gracePeriodInSeconds: 172800,
+  gracePeriodInSeconds: 60,
   newOffering: "10000000000000000",
-  quorum: "20",
+  //   quorum: "20",
+  quorum: "0",
   sponsorThreshold: SHARE_PER_NFT,
   minRetention: "66",
   votingTransferable: false,
