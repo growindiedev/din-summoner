@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@0xsequence/metadata": "^1.2.3",
     "@daohaus/abis": "^0.2.3",
     "@daohaus/connect": "^0.2.3",
     "@daohaus/connect-context": "^0.2.3",

@@ -1,13 +1,14 @@
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 
-import { Button, DataSm, H3, Link, SingleColumnLayout } from "@daohaus/ui";
+import { Button, H3, Link, SingleColumnLayout } from "@daohaus/ui";
 import { useDHConnect } from "@daohaus/connect";
 
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 5rem;
 `;
 
 const LinkButton = styled(Link)`
@@ -24,33 +25,24 @@ const Success = () => {
 
   return (
     <SingleColumnLayout>
-      <H3 style={{ marginBottom: "3rem" }}>You summoned your DAO.</H3>
       <ButtonContainer>
+        <H3 style={{ marginBottom: "3rem" }}>You summoned your DAO.</H3>
         <Button color="secondary" fullWidth>
           <LinkButton
-            showExternalIcon={false}
+            showExternalIcon={true}
             target="_blank"
-            href={`${chainId}/${daoId}/`}
+            href={`${chainId}/${daoId}/claim`}
           >
-            View DAO
+            Claim Page
           </LinkButton>
         </Button>
         <Button color="secondary" fullWidth>
           <LinkButton
-            showExternalIcon={false}
-            target="_blank"
-            href="https://docs.daohaus.club/"
-          >
-            Read Docs
-          </LinkButton>
-        </Button>
-        <Button color="secondary" fullWidth>
-          <LinkButton
-            showExternalIcon={false}
+            showExternalIcon={true}
             target="_blank"
             href={`${chainId}/${daoId}/settings`}
           >
-            Update DAO Settings
+            DAO Settings
           </LinkButton>
         </Button>
       </ButtonContainer>

@@ -130,18 +130,14 @@ export const APP_FORM: Record<string, CustomFormLego> = {
                 rows: [
                   {
                     rowId: "row3",
-                    left: {
+                    right: {
                       id: "lootPerNft",
                       type: "toWeiInput",
                       label: "Airdrop Per Nft",
                       placeholder: "100",
                       expectType: "number",
                     },
-                    right: {
-                      id: "dummy",
-                      type: "input",
-                      label: "don't fill this out (temp)",
-                    },
+                    left: APP_FIELD.TOTAL_SUPPLY_DISPLAY,
                   },
                 ],
               },
