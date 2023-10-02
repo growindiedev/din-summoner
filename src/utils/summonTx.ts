@@ -68,15 +68,15 @@ const assembleLootTokenParams = ({
   const tokenSymbol = formValues["lootTokenSymbol"];
   const lootSingleton = SILO_CONTRACTS["FIXED_LOOT_SINGLETON"][chainId];
   const initialHolders = [] as EthAddress[];
-  const lootToShaman = formValues["lootToShaman"];
-  const lootToVault = formValues["lootToVault"];
+  const lootTokenSupply = formValues["lootTokenSupply"];
+  const airdropAllocation = formValues["airdropAllocation"];
 
   if (
     !isString(tokenName) ||
     !isString(tokenSymbol) ||
     !lootSingleton ||
-    !isNumberish(lootToShaman) ||
-    !isNumberish(lootToVault)
+    !isNumberish(lootTokenSupply) ||
+    !isNumberish(airdropAllocation)
   ) {
     console.log("ERROR: Form Values", formValues);
 
@@ -84,6 +84,19 @@ const assembleLootTokenParams = ({
       "assembleLootTokenParams recieved arguments in the wrong shape or type"
     );
   }
+  const lootToVault =
+    BigInt(lootTokenSupply) -
+    (BigInt(lootTokenSupply) * BigInt(airdropAllocation)) / 100n;
+
+  const lootToShaman = BigInt(lootTokenSupply) - lootToVault;
+
+  console.log(
+    "loot token: lootTokenSupply, airdropAllocation, lootToShaman, lootToVault",
+    lootTokenSupply,
+    airdropAllocation,
+    lootToShaman,
+    lootToVault
+  );
 
   const lootParams = encodeValues(
     ["string", "string", "address[]", "uint256[]"],
@@ -123,15 +136,19 @@ const assembleShamanParams = ({
   const registryAddress = SILO_CONTRACTS["TBA_REGISTRY"][chainId];
   const tbaImplementationAddress =
     SILO_CONTRACTS["TBA_IMPLEMENTATION"][chainId];
-  const lootPerNft = formValues["lootPerNft"];
   const claimShamanSingleton =
     SILO_CONTRACTS["CLAIM_SHAMAN_SINGLETON"][chainId];
+  const lootTokenSupply = formValues["lootTokenSupply"];
+  const airdropAllocation = formValues["airdropAllocation"];
+  const maxClaims = formValues["maxClaims"];
 
   if (
     !isEthAddress(nftAddress) ||
     !registryAddress ||
     !tbaImplementationAddress ||
-    !isNumberish(lootPerNft) ||
+    !isNumberish(maxClaims) ||
+    !isNumberish(lootTokenSupply) ||
+    !isNumberish(airdropAllocation) ||
     !claimShamanSingleton
   ) {
     console.log("ERROR: Form Values", formValues);
@@ -140,6 +157,19 @@ const assembleShamanParams = ({
       "assembleShamanParams recieved arguments in the wrong shape or type"
     );
   }
+
+  const lootToVault =
+    BigInt(lootTokenSupply) -
+    (BigInt(lootTokenSupply) * BigInt(airdropAllocation)) / 100n;
+  const lootToShaman = BigInt(lootTokenSupply) - lootToVault;
+  const lootPerNft = BigInt(lootToShaman) / BigInt(maxClaims);
+
+  console.log(
+    "shaman maxClaims, lootToShaman, lootPerNft",
+    maxClaims,
+    lootToShaman,
+    lootPerNft
+  );
 
   const shamanParams = encodeValues(
     ["address", "address", "address", "uint256", "uint256"],
