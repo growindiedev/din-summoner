@@ -32,8 +32,8 @@ export const SILO_CONTRACTS: KeychainList = {
 
 export const SHARE_PER_NFT = "1000000000000000000";
 export const CLAIM_SHAMAN_PERMISSIONS = "2";
-export const SHARE_NAME = "vNFT";
-export const SHARE_SYMBOL = "Vote NFT";
+export const SHARE_NAME = "Silo Voting Power";
+export const SHARE_SYMBOL = "sVOTE";
 export const DEFAULT_SUMMON_VALUES = {
   //   votingPeriodInSeconds: 259200,
   votingPeriodInSeconds: 120,
