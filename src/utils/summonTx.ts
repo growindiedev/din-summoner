@@ -22,6 +22,22 @@ import {
   SILO_CONTRACTS,
 } from "./constants";
 
+export const calcAmountPerNft = ({
+  lootTokenSupply,
+  airdropAllocation,
+  maxClaims,
+}: {
+  lootTokenSupply: string | number;
+  airdropAllocation: string | number;
+  maxClaims: string | number;
+}) => {
+  const lootToVault =
+    BigInt(lootTokenSupply) -
+    (BigInt(lootTokenSupply) * BigInt(airdropAllocation)) / 100n;
+  const lootToShaman = BigInt(lootTokenSupply) - lootToVault;
+  return BigInt(lootToShaman) / BigInt(maxClaims);
+};
+
 export const assembleFixedLootSummonerArgs = (args: ArbitraryState) => {
   const formValues = args.appState.formValues as Record<string, unknown>;
   const chainId = args.chainId as ValidNetwork;
@@ -158,18 +174,13 @@ const assembleShamanParams = ({
     );
   }
 
-  const lootToVault =
-    BigInt(lootTokenSupply) -
-    (BigInt(lootTokenSupply) * BigInt(airdropAllocation)) / 100n;
-  const lootToShaman = BigInt(lootTokenSupply) - lootToVault;
-  const lootPerNft = BigInt(lootToShaman) / BigInt(maxClaims);
-
-  console.log(
-    "shaman maxClaims, lootToShaman, lootPerNft",
+  const lootPerNft = calcAmountPerNft({
+    lootTokenSupply,
+    airdropAllocation,
     maxClaims,
-    lootToShaman,
-    lootPerNft
-  );
+  });
+
+  console.log("shaman maxClaims, lootPerNft", maxClaims, lootPerNft);
 
   const shamanParams = encodeValues(
     ["address", "address", "address", "uint256", "uint256"],

@@ -138,7 +138,7 @@ export const APP_FORM: Record<string, CustomFormLego> = {
                       expectType: "number",
                       info: "Proportionally determines how many tokens will be received by each NFT that claims. Can be any number greater, less, or equal to a collection’s total supply - use with caution.",
                     },
-                    right: APP_FIELD.SPACER_FIELD,
+                    right: APP_FIELD.AMOUNT_PER_NFT,
                   },
                 ],
               },
