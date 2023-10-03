@@ -12,4 +12,8 @@ export const APP_FIELD: Record<string, CustomFieldLego> = {
     id: "totalSupplyDisplay",
     type: "totalSupplyDisplay",
   },
+  SPACER_FIELD: {
+    id: "spacerField",
+    type: "spacerField",
+  },
 };
