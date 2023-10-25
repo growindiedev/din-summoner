@@ -47,3 +47,5 @@ export const DEFAULT_SUMMON_VALUES = {
   votingTransferable: false,
   nvTransferable: true,
 };
+
+export const ADMIN_URL = "https://rdfadmin-test.netlify.app";

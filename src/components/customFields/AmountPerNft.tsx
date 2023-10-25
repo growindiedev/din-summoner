@@ -2,7 +2,7 @@ import { useFormContext } from "react-hook-form";
 import { styled } from "styled-components";
 
 import { Buildable, DataMd, Field, Label } from "@daohaus/ui";
-import { formatValueTo, fromWei, isNumberish } from "@daohaus/utils";
+import { formatValueTo, isNumberish, toWholeUnits } from "@daohaus/utils";
 import { calcAmountPerNft } from "../../utils/summonTx";
 import { useMemo } from "react";
 
@@ -25,6 +25,7 @@ export const AmountPerNft = (props: Buildable<Field>) => {
       maxClaims === "0"
     )
       return null;
+
     return calcAmountPerNft({
       lootTokenSupply,
       airdropAllocation,
@@ -36,7 +37,14 @@ export const AmountPerNft = (props: Buildable<Field>) => {
     <div>
       <Label>Amount per NFT</Label>
       {lootPerNft !== null ? (
-        <SupplyValue>{lootPerNft.toString()}</SupplyValue>
+        // <SupplyValue>{lootPerNft.toString()}</SupplyValue>
+        <SupplyValue>
+          {formatValueTo({
+            value: toWholeUnits(lootPerNft.toString(), 18),
+            decimals: 2,
+            format: "number",
+          })}
+        </SupplyValue>
       ) : null}
     </div>
   );

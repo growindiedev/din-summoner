@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { Button, H3, Link, SingleColumnLayout } from "@daohaus/ui";
 import { useDHConnect } from "@daohaus/connect";
+import { ADMIN_URL } from "../utils/constants";
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -31,16 +32,16 @@ const Success = () => {
           <LinkButton
             showExternalIcon={true}
             target="_blank"
-            href={`${chainId}/${daoId}/claim`}
+            href={`${ADMIN_URL}/#/molochv3/${chainId}/${daoId}/activate`}
           >
-            Claim Page
+            Activate Page
           </LinkButton>
         </Button>
         <Button color="secondary" fullWidth>
           <LinkButton
             showExternalIcon={true}
             target="_blank"
-            href={`${chainId}/${daoId}/settings`}
+            href={`${ADMIN_URL}/#/molochv3/${chainId}/${daoId}/settings`}
           >
             DAO Settings
           </LinkButton>
