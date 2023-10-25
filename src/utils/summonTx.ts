@@ -1,3 +1,4 @@
+import { parseEther } from "viem";
 import {
   ArbitraryState,
   EthAddress,
@@ -35,7 +36,9 @@ export const calcAmountPerNft = ({
     BigInt(lootTokenSupply) -
     (BigInt(lootTokenSupply) * BigInt(airdropAllocation)) / 100n;
   const lootToShaman = BigInt(lootTokenSupply) - lootToVault;
-  return BigInt(lootToShaman) / BigInt(maxClaims);
+  const loot = BigInt(lootToShaman) / BigInt(maxClaims);
+
+  return parseEther(loot.toString());
 };
 
 export const assembleFixedLootSummonerArgs = (args: ArbitraryState) => {
@@ -180,6 +183,8 @@ const assembleShamanParams = ({
     maxClaims,
   });
 
+  console.log("airdropAllocation", airdropAllocation);
+  console.log("lootTokenSupply", lootTokenSupply);
   console.log("shaman maxClaims, lootPerNft", maxClaims, lootPerNft);
 
   const shamanParams = encodeValues(

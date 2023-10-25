@@ -1,6 +1,7 @@
 import { Keychain, ValidNetwork } from "@daohaus/keychain-utils";
 import {
   ListTxsQueryVariables,
+  findDao,
   findTransaction,
   listDaos,
 } from "@daohaus/moloch-v3-data";
@@ -23,11 +24,13 @@ export const pollLastTXSilo: PollFetch = async ({
       txHash,
       graphApiKeys,
     });
+
+    console.log("result", result);
     if (result?.data?.transaction) {
       const daoRes = await listDaos({
         networkId: chainId,
         filter: {
-          sharesAddress: result.data.transaction.daoAddress,
+          id: result.data.transaction.daoAddress,
         },
       });
 
