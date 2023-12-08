@@ -1,11 +1,14 @@
-import { CoreFieldLookup } from "@daohaus/form-builder";
 import { MolochFields } from "@daohaus/moloch-v3-fields";
 import { FieldLegoBase, FormLegoBase } from "@daohaus/utils";
-import { TestField } from "../components/customFields/fieldTest";
+import { NftAddress } from "../components/customFields/NftAddress";
+import { SpacerField } from "../components/customFields/SpacerField";
+import { AmountPerNft } from "../components/customFields/AmountPerNft";
 
 export const AppFieldLookup = {
   ...MolochFields,
-  testField: TestField,
+  amountPerNft: AmountPerNft,
+  nftAddress: NftAddress,
+  spacerField: SpacerField,
 };
 
 export type CustomFieldLego = FieldLegoBase<typeof AppFieldLookup>;

@@ -13,17 +13,20 @@ const Home = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     result: any
   ) => {
-    const daoAddress = result?.data?.transaction?.daoAddress;
+    console.log("result", result);
+    const daoAddress = result?.items[0]?.id;
     navigate(`/success/${daoAddress}`);
   };
 
-  // todo: check chainId here is a valid one
+  // todo: check chainId here is a valid one and pass to formbuilder
+  console.log("chainId", chainId);
 
   return (
     <FormBuilder
       form={APP_FORM.SUMMON_RDF}
       customFields={AppFieldLookup}
-      targetNetwork={chainId}
+      targetNetwork={"0x5"}
+      submitButtonText="Summon NFT DAO"
       lifeCycleFns={{
         onPollSuccess: (result) => {
           onFormComplete(result);

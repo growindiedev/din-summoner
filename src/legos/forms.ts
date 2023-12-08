@@ -2,9 +2,10 @@ import { CustomFormLego } from "./fieldConfig";
 import { APP_FIELD } from "./fields";
 import { APP_TX } from "./tx";
 
-// todo: support a link under description
+// todo: support a link under description - do on page
 // description font is data instead of body
 // custom nft collection field
+// move submitButtonText to lego level in package
 
 export const APP_FORM: Record<string, CustomFormLego> = {
   SUMMON_RDF: {
@@ -17,12 +18,13 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       daoName: true,
       lootTokenName: true,
       lootTokenSymbol: true,
-      lootTokenSupply: true,
-      lootTokenAllocation: true,
       nftContractAddress: true,
+      maxClaims: true,
+      lootTokenSupply: true,
+      airdropAllocation: true,
     },
     log: true,
-    tx: APP_TX.POST_SIGNAL,
+    tx: APP_TX.CLAIM_SUMMON,
     fields: [
       {
         id: "nameSegment",
@@ -98,18 +100,45 @@ export const APP_FORM: Record<string, CustomFormLego> = {
                     rowId: "row2",
                     left: {
                       id: "lootTokenSupply",
-                      type: "input",
-                      label: "Meme Token Supply",
-                      placeholder: "69,420,000",
+                      type: "toWeiInput",
+                      label: "Total Supply",
+                      placeholder: "69,420",
                       expectType: "number",
+                      info: "The total fixed supply of meme tokens to generate",
                     },
                     right: {
-                      id: "lootTokenAllocation",
+                      id: "airdropAllocation",
                       type: "input",
-                      label: "Holder Allocation %",
-                      placeholder: "30",
+                      label: "Airdrop Allocation %",
+                      placeholder: "69%",
+                      info: "The portion of the total supply to be allocated towards the airdrop",
                       expectType: "percent",
                     },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "lootPerNftSegment",
+            type: "formSegment",
+            showDivider: false,
+            fields: [
+              {
+                id: "lootPerNftRow",
+                type: "splitColumn",
+                rows: [
+                  {
+                    rowId: "row3",
+                    left: {
+                      id: "maxClaims",
+                      type: "toWeiInput",
+                      label: "Max Claims",
+                      placeholder: "100",
+                      expectType: "number",
+                      info: "Proportionally determines how many tokens will be received by each NFT that claims. Can be any number greater, less, or equal to a collection’s total supply - use with caution.",
+                    },
+                    right: APP_FIELD.AMOUNT_PER_NFT,
                   },
                 ],
               },
@@ -128,3 +157,34 @@ export const APP_FORM: Record<string, CustomFormLego> = {
     ],
   },
 };
+
+// {
+//   id: "supplyAllocationSegment",
+//   type: "formSegment",
+//   showDivider: false,
+//   fields: [
+//     {
+//       id: "supplyAllocation",
+//       type: "splitColumn",
+//       rows: [
+//         {
+//           rowId: "row2",
+//           left: {
+//             id: "lootTokenSupply",
+//             type: "input",
+//             label: "Meme Token Supply",
+//             placeholder: "69,420,000",
+//             expectType: "number",
+//           },
+//           right: {
+//             id: "lootTokenAllocation",
+//             type: "input",
+//             label: "Holder Allocation %",
+//             placeholder: "30",
+//             expectType: "percent",
+//           },
+//         },
+//       ],
+//     },
+//   ],
+// },
