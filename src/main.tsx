@@ -19,7 +19,7 @@ import "./App.css";
 const supportedNetorks = {
   "0x5": HAUS_NETWORK_DATA["0x5"],
   // "0x1": HAUS_NETWORK_DATA["0x1"],
-  // "0xa": HAUS_NETWORK_DATA["0xa"],
+  "0xa": HAUS_NETWORK_DATA["0xa"],
 };
 
 const queryClient = new QueryClient();

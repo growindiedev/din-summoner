@@ -25,7 +25,7 @@ const Home = () => {
     <FormBuilder
       form={APP_FORM.SUMMON_RDF}
       customFields={AppFieldLookup}
-      targetNetwork={"0x5"}
+      targetNetwork={chainId}
       submitButtonText="Summon NFT DAO"
       lifeCycleFns={{
         onPollSuccess: (result) => {
