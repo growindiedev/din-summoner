@@ -22,9 +22,9 @@ export const SILO_CONTRACTS: KeychainList = {
     "0xa": "0x000000006551c19487814612e58FE06813775758",
   },
   TBA_IMPLEMENTATION: {
-    "0x1": "0x41C8f39463A868d3A88af00cd0fe7102F30E44eC",
-    "0x5": "0x41C8f39463A868d3A88af00cd0fe7102F30E44eC",
-    "0xa": "0x41C8f39463A868d3A88af00cd0fe7102F30E44eC",
+    "0x1": "0x55266d75D1a14E4572138116aF39863Ed6596E7F",
+    "0x5": "0x55266d75D1a14E4572138116aF39863Ed6596E7F",
+    "0xa": "0x55266d75D1a14E4572138116aF39863Ed6596E7F",
   },
 };
 
@@ -35,10 +35,10 @@ export const CLAIM_SHAMAN_PERMISSIONS = "2";
 export const SHARE_NAME = "Silo Voting Power";
 export const SHARE_SYMBOL = "sVOTE";
 export const DEFAULT_SUMMON_VALUES = {
-  //   votingPeriodInSeconds: 259200,
-  votingPeriodInSeconds: 120,
-  //   gracePeriodInSeconds: 172800,
-  gracePeriodInSeconds: 60,
+    votingPeriodInSeconds: 259200,
+  // votingPeriodInSeconds: 120,
+    gracePeriodInSeconds: 172800,
+  // gracePeriodInSeconds: 60,
   newOffering: "10000000000000000",
   //   quorum: "20",
   quorum: "0",
