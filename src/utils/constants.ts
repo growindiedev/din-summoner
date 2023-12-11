@@ -48,4 +48,4 @@ export const DEFAULT_SUMMON_VALUES = {
   nvTransferable: true,
 };
 
-export const ADMIN_URL = "https://rdfadmin-test.netlify.app";
+export const ADMIN_URL = "https://silo-administrator.vercel.app";
