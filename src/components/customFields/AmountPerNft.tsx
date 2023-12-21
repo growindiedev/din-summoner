@@ -35,7 +35,7 @@ export const AmountPerNft = (props: Buildable<Field>) => {
 
   return (
     <div>
-      <Label>Amount per NFT</Label>
+      <Label>Meme token airdrop per NFT</Label>
       {lootPerNft !== null ? (
         // <SupplyValue>{lootPerNft.toString()}</SupplyValue>
         <SupplyValue>
@@ -45,7 +45,7 @@ export const AmountPerNft = (props: Buildable<Field>) => {
             format: "number",
           })}
         </SupplyValue>
-      ) : null}
+      ) : (<SupplyValue>--</SupplyValue>)}
     </div>
   );
 };

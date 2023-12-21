@@ -17,6 +17,8 @@ import { SummonParams, handleKeychains } from "@daohaus/contract-utils";
 import {
   CLAIM_SHAMAN_PERMISSIONS,
   DEFAULT_SUMMON_VALUES,
+  LOOT_NAME,
+  LOOT_SYMBOL,
   SHARE_NAME,
   SHARE_PER_NFT,
   SHARE_SYMBOL,
@@ -41,42 +43,92 @@ export const calcAmountPerNft = ({
   return parseEther(loot.toString());
 };
 
-export const assembleFixedLootSummonerArgs = (args: ArbitraryState) => {
+export const assembleLootSummonerArgs = (args: ArbitraryState) => {
   const formValues = args.appState.formValues as Record<string, unknown>;
   const chainId = args.chainId as ValidNetwork;
+  let txArgs: [string, string, string, string[], string];
 
-  const initializationLootTokenParams = assembleLootTokenParams({
-    formValues,
-    chainId,
-  });
+  if (formValues["lootTokenName"] !== "") {
+    // if any of the fields are empty throw an error
+    if (
+      formValues["lootTokenName"] === "" ||
+      formValues["lootTokenSymbol"] === "" ||
+      formValues["maxClaims"] === 0 ||
+      formValues["lootTokenSupply"] === 0 ||
+      formValues["airdropAllocation"] === 0
+    ) {
+      console.log("ERROR: Form Values", formValues);
 
-  const initializationShareTokenParams = assembleShareTokenParams({
-    chainId,
-  });
+      throw new Error(
+        "Invalid form values. Please make sure all fields are filled out."
+      );
+    }
 
-  const initializationShamanParams = assembleShamanParams({
-    formValues,
-    chainId,
-  });
+    const initializationLootTokenParams = assembleFixedLootTokenParams({
+      formValues,
+      chainId,
+    });
+  
+    const initializationShareTokenParams = assembleShareTokenParams({
+      formValues,
+      chainId,
+    });
+  
+    const initializationShamanParams = assembleShamanParams({
+      formValues,
+      chainId,
+    });
+  
+    const postInitializationActions = assembleInitActions({
+      formValues,
+      chainId,
+    });
+  
+    txArgs = [
+      initializationLootTokenParams,
+      initializationShareTokenParams,
+      initializationShamanParams,
+      postInitializationActions,
+      getNonce(),
+    ];
 
-  const postInitializationActions = assembleInitActions({
-    formValues,
-    chainId,
-  });
+  } else {
+    const initializationLootTokenParams = assembleLootTokenParams({
+      formValues,
+      chainId,
+    });
+  
+    const initializationShareTokenParams = assembleShareTokenParams({
+      formValues,
+      chainId,
+    });
+  
+    const initializationShamanParams = assembleShamanParams({
+      formValues,
+      chainId,
+    });
+  
+    const postInitializationActions = assembleInitActions({
+      formValues,
+      chainId,
+    });
+  
+    txArgs = [
+      initializationLootTokenParams,
+      initializationShareTokenParams,
+      initializationShamanParams,
+      postInitializationActions,
+      getNonce(),
+    ];
 
-  const txArgs = [
-    initializationLootTokenParams,
-    initializationShareTokenParams,
-    initializationShamanParams,
-    postInitializationActions,
-    getNonce(),
-  ];
+  }
+
   console.log("txArgs", txArgs);
 
   return txArgs;
 };
 
-const assembleLootTokenParams = ({
+const assembleFixedLootTokenParams = ({
   formValues,
   chainId,
 }: {
@@ -100,7 +152,7 @@ const assembleLootTokenParams = ({
     console.log("ERROR: Form Values", formValues);
 
     throw new Error(
-      "assembleLootTokenParams recieved arguments in the wrong shape or type"
+      "assembleFixedLootTokenParams recieved arguments in the wrong shape or type"
     );
   }
   const lootToVault =
@@ -125,8 +177,29 @@ const assembleLootTokenParams = ({
   return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
 };
 
-const assembleShareTokenParams = ({ chainId }: { chainId: ValidNetwork }) => {
+const assembleLootTokenParams = ({ chainId, formValues }: { chainId: ValidNetwork, formValues: Record<string, unknown> }) => {
+  const lootSingleton = CONTRACT_KEYCHAINS["LOOT_SINGLETON"][chainId];
+  const daoName = formValues["daoName"] as string;
+
+  if (!lootSingleton) {
+    console.log("ERROR: passed args");
+
+    throw new Error(
+      "assembleLootTokenParams recieved arguments in the wrong shape or type"
+    );
+  }
+
+  const lootParams = encodeValues(
+    ["string", "string"],
+    [daoName + " " + LOOT_NAME, daoName.substring(0, 3).toUpperCase() + "-" + LOOT_SYMBOL]
+  );
+
+  return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
+};
+
+const assembleShareTokenParams = ({ chainId, formValues }: { chainId: ValidNetwork, formValues: Record<string, unknown> }) => {
   const shareSingleton = CONTRACT_KEYCHAINS["SHARES_SINGLETON"][chainId];
+  const daoName = formValues["daoName"] as string;
 
   if (!shareSingleton) {
     console.log("ERROR: passed args");
@@ -138,7 +211,7 @@ const assembleShareTokenParams = ({ chainId }: { chainId: ValidNetwork }) => {
 
   const shareParams = encodeValues(
     ["string", "string"],
-    [SHARE_NAME, SHARE_SYMBOL]
+    [daoName + " " + SHARE_NAME, daoName.substring(0, 3).toUpperCase() + "-" + SHARE_SYMBOL]
   );
 
   return encodeValues(["address", "bytes"], [shareSingleton, shareParams]);

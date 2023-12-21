@@ -21,7 +21,7 @@ export const APP_TX = {
     id: "CLAIM_SUMMON",
     contract: APP_CONTRACT.CLAIM_SUMMONER,
     method: "summonBaalFromReferrer",
-    argCallback: "assembleFixedLootSummonerArgs",
+    argCallback: "assembleLootSummonerArgs",
     customPoll: {
       fetch: pollLastTXSilo,
       test: testLastTXSilo,

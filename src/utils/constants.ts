@@ -11,6 +11,11 @@ export const SILO_CONTRACTS: KeychainList = {
     "0x5": "0x9d42696A9C3c54952b8918dcbcb82Dd710347c77",
     "0xa": "0x8dd2CA9f0Ae4f464bf5a0C2283FC5C84f16F2F8E",
   },
+  LOOT_SINGLETON: {
+    "0x1": "0x0444AE984b9563C8480244693ED65F25B3C64a4E",
+    "0x5": "0x0444AE984b9563C8480244693ED65F25B3C64a4E",
+    "0xa": "0x0444AE984b9563C8480244693ED65F25B3C64a4E",
+  },
   CLAIM_SHAMAN_SINGLETON: {
     "0x1": "0x80daee7a5322FbEB3f0f72531FdaB5ED0F3e7333",
     "0x5": "0x80daee7a5322FbEB3f0f72531FdaB5ED0F3e7333",
@@ -32,8 +37,10 @@ export const SILO_CONTRACTS: KeychainList = {
 
 export const SHARE_PER_NFT = "1000000000000000000";
 export const CLAIM_SHAMAN_PERMISSIONS = "2";
-export const SHARE_NAME = "Silo Voting Power";
+export const SHARE_NAME = "Voting Power";
 export const SHARE_SYMBOL = "sVOTE";
+export const LOOT_NAME = "Community Power";
+export const LOOT_SYMBOL = "sLOOT";
 export const DEFAULT_SUMMON_VALUES = {
     votingPeriodInSeconds: 259200,
   // votingPeriodInSeconds: 120,

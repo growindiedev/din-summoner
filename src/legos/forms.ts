@@ -16,12 +16,12 @@ export const APP_FORM: Record<string, CustomFormLego> = {
     submitButtonText: "Summon NFT DAO",
     requiredFields: {
       daoName: true,
-      lootTokenName: true,
-      lootTokenSymbol: true,
       nftContractAddress: true,
       maxClaims: true,
-      lootTokenSupply: true,
-      airdropAllocation: true,
+      // lootTokenName: false,
+      // lootTokenSymbol: false,
+      // lootTokenSupply: false,
+      // airdropAllocation: false,
     },
     log: true,
     tx: APP_TX.CLAIM_SUMMON,
@@ -39,108 +39,121 @@ export const APP_FORM: Record<string, CustomFormLego> = {
         ],
       },
       {
-        id: "tokenSegment",
+        id: "checkGateRender",
+        type: "checkGateRender",
+        gateLabel: "Add Meme Token (airdrop a community token to all NFT holders)",
+        clearFieldIdsOnUnchecked: ["lootTokenName", "lootTokenSymbol", "lootTokenSupply", "airdropAllocation"],
+        components: [
+          {
+            id: "tokenSegment",
+            type: "formSegment",
+            title: "Meme Token",
+            description:
+              "Create a meme token to be claimed by holders and the remaining supply will be managed by the DAO.",
+            fields: [
+              {
+                id: "lootTokenSegment",
+                type: "formSegment",
+                showDivider: false,
+                fields: [
+                  {
+                    id: "lootToken",
+                    type: "splitColumn",
+                    rows: [
+                      {
+                        rowId: "row1",
+                        left: {
+                          id: "lootTokenName",
+                          type: "input",
+                          label: "Meme Token Name",
+                          placeholder: "Meme Token",
+                          defaultValue: "",
+                          rules: {
+                            maxLength: {
+                              value: 50,
+                              message:
+                                "Token name cannot be longer than 50 characters",
+                            },
+                          },
+                        },
+                        right: {
+                          id: "lootTokenSymbol",
+                          type: "input",
+                          label: "Meme Token Symbol",
+                          placeholder: "MEME",
+                          defaultValue: "",
+                          rules: {
+                            maxLength: {
+                              value: 10,
+                              message:
+                                "Token symbol cannot be longer than 10 characters",
+                            },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: "supplyAllocationSegment",
+                type: "formSegment",
+                showDivider: false,
+                fields: [
+                  {
+                    id: "supplyAllocation",
+                    type: "splitColumn",
+                    rows: [
+                      {
+                        rowId: "row2",
+                        left: {
+                          id: "lootTokenSupply",
+                          type: "toWeiInput",
+                          label: "Total Supply",
+                          placeholder: "69,420",
+                          defaultValue: "",
+                          expectType: "number",
+                          info: "The total fixed supply of meme tokens to generate",
+                        },
+                        right: {
+                          id: "airdropAllocation",
+                          type: "input",
+                          label: "DAO Allocation %",
+                          placeholder: "69%",
+                          defaultValue: "",
+                          info: "The portion of the total supply to be allocated tto a DAO treasury. Reamaining will be towards the airdrop",
+                          expectType: "percent",
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+              
+            ],
+          },
+        ],
+      },
+      {
+        id: "lootPerNftSegment",
         type: "formSegment",
-        title: "Meme Token",
-        description:
-          "Create a meme token to be claimed by holders and the remaining supply will be managed by the DAO.",
+        showDivider: false,
         fields: [
           {
-            id: "lootTokenSegment",
-            type: "formSegment",
-            showDivider: false,
-            fields: [
+            id: "lootPerNftRow",
+            type: "splitColumn",
+            rows: [
               {
-                id: "lootToken",
-                type: "splitColumn",
-                rows: [
-                  {
-                    rowId: "row1",
-                    left: {
-                      id: "lootTokenName",
-                      type: "input",
-                      label: "Meme Token Name",
-                      placeholder: "Meme Token",
-                      rules: {
-                        maxLength: {
-                          value: 50,
-                          message:
-                            "Token name cannot be longer than 50 characters",
-                        },
-                      },
-                    },
-                    right: {
-                      id: "lootTokenSymbol",
-                      type: "input",
-                      label: "Meme Token Symbol",
-                      placeholder: "MEME",
-                      rules: {
-                        maxLength: {
-                          value: 10,
-                          message:
-                            "Token symbol cannot be longer than 10 characters",
-                        },
-                      },
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "supplyAllocationSegment",
-            type: "formSegment",
-            showDivider: false,
-            fields: [
-              {
-                id: "supplyAllocation",
-                type: "splitColumn",
-                rows: [
-                  {
-                    rowId: "row2",
-                    left: {
-                      id: "lootTokenSupply",
-                      type: "toWeiInput",
-                      label: "Total Supply",
-                      placeholder: "69,420",
-                      expectType: "number",
-                      info: "The total fixed supply of meme tokens to generate",
-                    },
-                    right: {
-                      id: "airdropAllocation",
-                      type: "input",
-                      label: "Airdrop Allocation %",
-                      placeholder: "69%",
-                      info: "The portion of the total supply to be allocated towards the airdrop",
-                      expectType: "percent",
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "lootPerNftSegment",
-            type: "formSegment",
-            showDivider: false,
-            fields: [
-              {
-                id: "lootPerNftRow",
-                type: "splitColumn",
-                rows: [
-                  {
-                    rowId: "row3",
-                    left: {
-                      id: "maxClaims",
-                      type: "toWeiInput",
-                      label: "Max Claims",
-                      placeholder: "100",
-                      expectType: "number",
-                      info: "Proportionally determines how many tokens will be received by each NFT that claims. Can be any number greater, less, or equal to a collection’s total supply - use with caution.",
-                    },
-                    right: APP_FIELD.AMOUNT_PER_NFT,
-                  },
-                ],
+                rowId: "row3",
+                left: {
+                  id: "maxClaims",
+                  type: "toWeiInput",
+                  label: "Max Claims",
+                  placeholder: "100",
+                  expectType: "number",
+                  info: "Proportionally determines how many tokens will be received by each NFT that claims. Can be any number greater, less, or equal to a collection’s total supply - use with caution.",
+                },
+                right: APP_FIELD.AMOUNT_PER_NFT,
               },
             ],
           },

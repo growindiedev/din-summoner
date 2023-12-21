@@ -3,12 +3,14 @@ import { FieldLegoBase, FormLegoBase } from "@daohaus/utils";
 import { NftAddress } from "../components/customFields/NftAddress";
 import { SpacerField } from "../components/customFields/SpacerField";
 import { AmountPerNft } from "../components/customFields/AmountPerNft";
+import { CheckGateRender } from "../components/customFields/CheckGateMeme";
 
 export const AppFieldLookup = {
   ...MolochFields,
   amountPerNft: AmountPerNft,
   nftAddress: NftAddress,
   spacerField: SpacerField,
+  checkGateRender: CheckGateRender
 };
 
 export type CustomFieldLego = FieldLegoBase<typeof AppFieldLookup>;
