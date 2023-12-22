@@ -47,8 +47,11 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
   const formValues = args.appState.formValues as Record<string, unknown>;
   const chainId = args.chainId as ValidNetwork;
   let txArgs: [string, string, string, string[], string];
-
-  if (formValues["lootTokenName"] !== "") {
+  console.log(">>>>>", formValues["lootTokenName"]);
+  if (
+    formValues["lootTokenName"] !== "" &&
+    formValues["lootTokenName"] !== undefined
+  ) {
     // if any of the fields are empty throw an error
     if (
       formValues["lootTokenName"] === "" ||
@@ -64,55 +67,55 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
       );
     }
 
-    const initializationLootTokenParams = assembleFixedLootTokenParams({
+    const initializationFixedLootTokenParams = assembleFixedLootTokenParams({
       formValues,
       chainId,
     });
-  
+
     const initializationShareTokenParams = assembleShareTokenParams({
       formValues,
       chainId,
     });
-  
+
     const initializationShamanParams = assembleShamanParams({
       formValues,
       chainId,
     });
-  
+
     const postInitializationActions = assembleInitActions({
       formValues,
       chainId,
     });
-  
+
     txArgs = [
-      initializationLootTokenParams,
+      initializationFixedLootTokenParams,
       initializationShareTokenParams,
       initializationShamanParams,
       postInitializationActions,
       getNonce(),
     ];
-
   } else {
+    console.log(">>>>> no loot token name");
     const initializationLootTokenParams = assembleLootTokenParams({
       formValues,
       chainId,
     });
-  
+
     const initializationShareTokenParams = assembleShareTokenParams({
       formValues,
       chainId,
     });
-  
+
     const initializationShamanParams = assembleShamanParams({
       formValues,
       chainId,
     });
-  
+
     const postInitializationActions = assembleInitActions({
       formValues,
       chainId,
     });
-  
+
     txArgs = [
       initializationLootTokenParams,
       initializationShareTokenParams,
@@ -120,7 +123,6 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
       postInitializationActions,
       getNonce(),
     ];
-
   }
 
   console.log("txArgs", txArgs);
@@ -177,9 +179,47 @@ const assembleFixedLootTokenParams = ({
   return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
 };
 
-const assembleLootTokenParams = ({ chainId, formValues }: { chainId: ValidNetwork, formValues: Record<string, unknown> }) => {
-  const lootSingleton = CONTRACT_KEYCHAINS["LOOT_SINGLETON"][chainId];
+const assembleLootTokenParams = ({
+  formValues,
+  chainId,
+}: {
+  formValues: Record<string, unknown>;
+  chainId: ValidNetwork;
+}) => {
+
+  const lootSingleton = SILO_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
+
+  if (
+    !isString(daoName) ||
+    !lootSingleton
+  ) {
+    console.log("ERROR: Form Values", formValues);
+
+    throw new Error(
+      "assembleLootTokenParams recieved arguments in the wrong shape or type"
+    );
+  }
+
+  const lootParams = encodeValues(
+    ["string", "string", "address[]", "uint256[]"],
+    ["", "", [], []]
+  );
+
+  return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
+};
+
+const assembleLootTokenParamsOld = ({
+  chainId,
+  formValues,
+}: {
+  chainId: ValidNetwork;
+  formValues: Record<string, unknown>;
+}) => {
+  const lootSingleton = SILO_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
+  const daoName = formValues["daoName"] as string;
+
+
 
   if (!lootSingleton) {
     console.log("ERROR: passed args");
@@ -188,16 +228,30 @@ const assembleLootTokenParams = ({ chainId, formValues }: { chainId: ValidNetwor
       "assembleLootTokenParams recieved arguments in the wrong shape or type"
     );
   }
+  console.log(
+    ">>>>> assembleLootTokenParams",
+    daoName + " " + LOOT_NAME,
+    daoName.substring(0, 3).toUpperCase() + "-" + LOOT_SYMBOL
+  );
 
   const lootParams = encodeValues(
     ["string", "string"],
-    [daoName + " " + LOOT_NAME, daoName.substring(0, 3).toUpperCase() + "-" + LOOT_SYMBOL]
+    [
+      daoName + " " + LOOT_NAME,
+      daoName.substring(0, 3).toUpperCase() + "-" + LOOT_SYMBOL,
+    ]
   );
 
   return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
 };
 
-const assembleShareTokenParams = ({ chainId, formValues }: { chainId: ValidNetwork, formValues: Record<string, unknown> }) => {
+const assembleShareTokenParams = ({
+  chainId,
+  formValues,
+}: {
+  chainId: ValidNetwork;
+  formValues: Record<string, unknown>;
+}) => {
   const shareSingleton = CONTRACT_KEYCHAINS["SHARES_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
 
@@ -211,7 +265,10 @@ const assembleShareTokenParams = ({ chainId, formValues }: { chainId: ValidNetwo
 
   const shareParams = encodeValues(
     ["string", "string"],
-    [daoName + " " + SHARE_NAME, daoName.substring(0, 3).toUpperCase() + "-" + SHARE_SYMBOL]
+    [
+      daoName + " " + SHARE_NAME,
+      daoName.substring(0, 3).toUpperCase() + "-" + SHARE_SYMBOL,
+    ]
   );
 
   return encodeValues(["address", "bytes"], [shareSingleton, shareParams]);
@@ -228,16 +285,19 @@ const assembleShamanParams = ({
   const registryAddress = SILO_CONTRACTS["TBA_REGISTRY"][chainId];
   const tbaImplementationAddress =
     SILO_CONTRACTS["TBA_IMPLEMENTATION"][chainId];
+  const tbaProxyImplementationAddress =
+    SILO_CONTRACTS["TBA_PROXY_IMPLEMENTATION"][chainId];
   const claimShamanSingleton =
     SILO_CONTRACTS["CLAIM_SHAMAN_SINGLETON"][chainId];
-  const lootTokenSupply = formValues["lootTokenSupply"];
-  const airdropAllocation = formValues["airdropAllocation"];
+  const lootTokenSupply = formValues["lootTokenSupply"] || 0;
+  const airdropAllocation = formValues["airdropAllocation"] || 0;
   const maxClaims = formValues["maxClaims"];
 
   if (
     !isEthAddress(nftAddress) ||
     !registryAddress ||
     !tbaImplementationAddress ||
+    !tbaProxyImplementationAddress ||
     !isNumberish(maxClaims) ||
     !isNumberish(lootTokenSupply) ||
     !isNumberish(airdropAllocation) ||
@@ -261,11 +321,12 @@ const assembleShamanParams = ({
   console.log("shaman maxClaims, lootPerNft", maxClaims, lootPerNft);
 
   const shamanParams = encodeValues(
-    ["address", "address", "address", "uint256", "uint256"],
+    ["address", "address", "address", "address", "uint256", "uint256"],
     [
       nftAddress,
       registryAddress,
       tbaImplementationAddress,
+      tbaProxyImplementationAddress,
       lootPerNft,
       SHARE_PER_NFT,
     ]

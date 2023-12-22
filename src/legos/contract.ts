@@ -8,6 +8,6 @@ export const APP_CONTRACT: Record<string, ContractLego> = {
     type: "static",
     contractName: "ClaimSummoner",
     abi: fixedLootShamanSummonerAbi,
-    targetAddress: SILO_CONTRACTS["FIXED_LOOT_SUMMONER"],
+    targetAddress: SILO_CONTRACTS["BASE_SUMMONER"],
   },
 };
