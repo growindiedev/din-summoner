@@ -41,8 +41,15 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       {
         id: "checkGateRender",
         type: "checkGateRender",
-        gateLabel: "Add Meme Token (airdrop a community token to all NFT holders)",
-        clearFieldIdsOnUnchecked: ["lootTokenName", "lootTokenSymbol", "lootTokenSupply", "airdropAllocation"],
+        gateLabel:
+          "Add Meme Token (airdrop a community token to all NFT holders)",
+        clearFieldIdsOnUnchecked: [
+          "lootTokenName",
+          "lootTokenSymbol",
+          "lootTokenSupply",
+          "airdropAllocation",
+          "maxClaims"
+        ],
         components: [
           {
             id: "tokenSegment",
@@ -129,36 +136,36 @@ export const APP_FORM: Record<string, CustomFormLego> = {
                   },
                 ],
               },
-              
-            ],
-          },
-        ],
-      },
-      {
-        id: "lootPerNftSegment",
-        type: "formSegment",
-        showDivider: false,
-        fields: [
-          {
-            id: "lootPerNftRow",
-            type: "splitColumn",
-            rows: [
               {
-                rowId: "row3",
-                left: {
-                  id: "maxClaims",
-                  type: "toWeiInput",
-                  label: "Max Claims",
-                  placeholder: "100",
-                  expectType: "number",
-                  info: "Proportionally determines how many tokens will be received by each NFT that claims. Can be any number greater, less, or equal to a collection’s total supply - use with caution.",
-                },
-                right: APP_FIELD.AMOUNT_PER_NFT,
+                id: "lootPerNftSegment",
+                type: "formSegment",
+                showDivider: false,
+                fields: [
+                  {
+                    id: "lootPerNftRow",
+                    type: "splitColumn",
+                    rows: [
+                      {
+                        rowId: "row3",
+                        left: {
+                          id: "maxClaims",
+                          type: "toWeiInput",
+                          label: "Max Claims",
+                          placeholder: "100",
+                          expectType: "number",
+                          info: "Proportionally determines how many tokens will be received by each NFT that claims. Can be any number greater, less, or equal to a collection’s total supply - use with caution.",
+                        },
+                        right: APP_FIELD.AMOUNT_PER_NFT,
+                      },
+                    ],
+                  },
+                ],
               },
             ],
           },
         ],
       },
+
       {
         id: "nftCollectionSegment",
         type: "formSegment",

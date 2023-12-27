@@ -47,10 +47,11 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
   const formValues = args.appState.formValues as Record<string, unknown>;
   const chainId = args.chainId as ValidNetwork;
   let txArgs: [string, string, string, string[], string];
-  console.log(">>>>>", formValues["lootTokenName"]);
+  console.log(">>>>>", formValues);
   if (
     formValues["lootTokenName"] !== "" &&
-    formValues["lootTokenName"] !== undefined
+    formValues["lootTokenName"] !== undefined &&
+    formValues["lootTokenName"] !== null
   ) {
     // if any of the fields are empty throw an error
     if (
@@ -179,21 +180,19 @@ const assembleFixedLootTokenParams = ({
   return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
 };
 
-const assembleLootTokenParams = ({
+const assembleLootTokenParamsNew = ({
   formValues,
   chainId,
 }: {
   formValues: Record<string, unknown>;
   chainId: ValidNetwork;
 }) => {
-
   const lootSingleton = SILO_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
+  const tokenName = formValues["lootTokenName"] as string;
+  const tokenSymbol = formValues["lootTokenSymbol"] as string;
 
-  if (
-    !isString(daoName) ||
-    !lootSingleton
-  ) {
+  if (!isString(daoName) || !lootSingleton) {
     console.log("ERROR: Form Values", formValues);
 
     throw new Error(
@@ -203,13 +202,13 @@ const assembleLootTokenParams = ({
 
   const lootParams = encodeValues(
     ["string", "string", "address[]", "uint256[]"],
-    ["", "", [], []]
+    [tokenName, tokenSymbol, [], []]
   );
 
   return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
 };
 
-const assembleLootTokenParamsOld = ({
+const assembleLootTokenParams = ({
   chainId,
   formValues,
 }: {
@@ -218,8 +217,6 @@ const assembleLootTokenParamsOld = ({
 }) => {
   const lootSingleton = SILO_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
-
-
 
   if (!lootSingleton) {
     console.log("ERROR: passed args");
@@ -235,10 +232,12 @@ const assembleLootTokenParamsOld = ({
   );
 
   const lootParams = encodeValues(
-    ["string", "string"],
+    ["string", "string", "address[]", "uint256[]"],
     [
       daoName + " " + LOOT_NAME,
       daoName.substring(0, 3).toUpperCase() + "-" + LOOT_SYMBOL,
+      [],
+      [],
     ]
   );
 
@@ -291,7 +290,7 @@ const assembleShamanParams = ({
     SILO_CONTRACTS["CLAIM_SHAMAN_SINGLETON"][chainId];
   const lootTokenSupply = formValues["lootTokenSupply"] || 0;
   const airdropAllocation = formValues["airdropAllocation"] || 0;
-  const maxClaims = formValues["maxClaims"];
+  const maxClaims = formValues["maxClaims"] || 0;
 
   if (
     !isEthAddress(nftAddress) ||
@@ -310,11 +309,14 @@ const assembleShamanParams = ({
     );
   }
 
-  const lootPerNft = calcAmountPerNft({
-    lootTokenSupply,
-    airdropAllocation,
-    maxClaims,
-  });
+  const lootPerNft =
+    Number(maxClaims) > 0
+      ? calcAmountPerNft({
+          lootTokenSupply,
+          airdropAllocation,
+          maxClaims,
+        })
+      : 0;
 
   console.log("airdropAllocation", airdropAllocation);
   console.log("lootTokenSupply", lootTokenSupply);
