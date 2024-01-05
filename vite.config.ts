@@ -33,7 +33,7 @@ export default ({ mode }) => {
         },
       },
     },
-
+    base: "/silo-rdf-summoner/",
     build: {
       target: ["es2020"],
     },
