@@ -46,7 +46,18 @@ export const SILO_CONTRACTS: KeychainList = {
     "0x1": "0x41C8f39463A868d3A88af00cd0fe7102F30E44eC",
     "0x5": "0x41C8f39463A868d3A88af00cd0fe7102F30E44eC",
     "0xa": "0x41C8f39463A868d3A88af00cd0fe7102F30E44eC",
-  }
+  },
+  GNOSIS_SAFE_PROXY_FACTORY: {
+    "0x1": "0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2",
+    "0x5": "0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2",
+    "0xa": "0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2",
+  },
+  GNOSIS_SAFE_MASTER_COPY: {
+    "0x1": "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552",
+    "0x5": "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552",
+    "0xa": "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552",
+  },
+
 };
 
 /// https://docs.tokenbound.org/contracts/deployments
@@ -71,4 +82,4 @@ export const DEFAULT_SUMMON_VALUES = {
   nvTransferable: true,
 };
 
-export const ADMIN_URL = "https://silo-administrator.vercel.app";
+export const ADMIN_URL = "https://silohaus.github.io/silo-nft-dao-admin/";

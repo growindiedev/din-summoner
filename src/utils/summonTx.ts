@@ -3,6 +3,7 @@ import {
   ArbitraryState,
   EthAddress,
   POSTER_TAGS,
+  ZERO_ADDRESS,
   encodeFunction,
   encodeValues,
   getNonce,
@@ -10,8 +11,11 @@ import {
   isNumberish,
   isString,
 } from "@daohaus/utils";
-import { CONTRACT_KEYCHAINS, ValidNetwork } from "@daohaus/keychain-utils";
+import { CONTRACT_KEYCHAINS, HAUS_RPC, Keychain, ValidNetwork } from "@daohaus/keychain-utils";
 import { LOCAL_ABI } from "@daohaus/abis";
+import safeAbi from "../abis/safe.json";
+import safeFactoryAbi from "../abis/safeFactory.json";
+
 import { SummonParams, handleKeychains } from "@daohaus/contract-utils";
 
 import {
@@ -24,6 +28,8 @@ import {
   SHARE_SYMBOL,
   SILO_CONTRACTS,
 } from "./constants";
+import { createEthersContract } from "@daohaus/tx-builder";
+import { BigNumber, ethers } from "ethers";
 
 export const calcAmountPerNft = ({
   lootTokenSupply,
@@ -48,11 +54,23 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
   const chainId = args.chainId as ValidNetwork;
   let txArgs: [string, string, string, string[], string];
   console.log(">>>>>", formValues);
+
+  if(!isString(formValues["saltNonce"])  ) {
+    throw new Error("Invalid nonce");
+  }
+
+
+  const saltNonce = (BigNumber.from(formValues["saltNonce"]).toHexString()) || "8441";
+  console.log("salt nonce", saltNonce);
+
+  
+
   if (
     formValues["lootTokenName"] !== "" &&
     formValues["lootTokenName"] !== undefined &&
     formValues["lootTokenName"] !== null
   ) {
+
     // if any of the fields are empty throw an error
     if (
       formValues["lootTokenName"] === "" ||
@@ -86,6 +104,7 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
     const postInitializationActions = assembleInitActions({
       formValues,
       chainId,
+      saltNonce
     });
 
     txArgs = [
@@ -93,7 +112,7 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
       initializationShareTokenParams,
       initializationShamanParams,
       postInitializationActions,
-      getNonce(),
+      saltNonce,
     ];
   } else {
     console.log(">>>>> no loot token name");
@@ -115,6 +134,7 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
     const postInitializationActions = assembleInitActions({
       formValues,
       chainId,
+      saltNonce
     });
 
     txArgs = [
@@ -122,7 +142,7 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
       initializationShareTokenParams,
       initializationShamanParams,
       postInitializationActions,
-      getNonce(),
+      saltNonce,
     ];
   }
 
@@ -343,9 +363,11 @@ const assembleShamanParams = ({
 const assembleInitActions = ({
   formValues,
   chainId,
+  saltNonce
 }: {
   formValues: Record<string, unknown>;
   chainId: ValidNetwork;
+  saltNonce: string;
 }) => {
   const { POSTER } = handleKeychains(chainId);
 
@@ -353,6 +375,7 @@ const assembleInitActions = ({
     // tokenConfigTX(DEFAULT_SUMMON_VALUES),
     governanceConfigTX(DEFAULT_SUMMON_VALUES),
     metadataConfigTX(formValues, POSTER),
+    managerAccountConfigTX(formValues, saltNonce, chainId),
   ];
 };
 
@@ -436,3 +459,78 @@ const metadataConfigTX = (formValues: SummonParams, posterAddress: string) => {
   }
   throw new Error("Encoding Error");
 };
+
+const managerAccountConfigTX = (formValues: Record<string, unknown>, saltNonce: string, chainId: ValidNetwork) => {
+
+  const { managerAccountAddress, calculatedTreasuryAddress } = formValues;
+  
+  if (!isEthAddress(managerAccountAddress) || !isEthAddress(calculatedTreasuryAddress)) {
+    console.log("ERROR: Form Values", formValues);
+    throw new Error("Manager addresses recieved arguments in the wrong shape or type");
+  }
+
+  // calculated address
+  console.log(">>>>>>>>>>>>>>. treasuryAddress", calculatedTreasuryAddress, isEthAddress(calculatedTreasuryAddress));
+
+  console.log(">>>>>>>>>>>>>>. managerAccountAddress", managerAccountAddress);
+  const ADD_MODULE = encodeFunction(safeAbi, "enableModule", [
+    managerAccountAddress
+  ]);
+  console.log("ADD_MODULE", ADD_MODULE);
+
+  const encoded = encodeFunction(LOCAL_ABI.BAAL, "executeAsBaal", [
+    calculatedTreasuryAddress as EthAddress,
+    0,
+    ADD_MODULE,
+  ]);
+  if (isString(encoded)) {
+    return encoded;
+  }
+  throw new Error("***********Encoding Error***************");
+};
+
+// util to get the address of a safe before it is deployed
+
+export const calculateCreateProxyWithNonceAddress = async (
+  saltNonce: string,
+  chainId: ValidNetwork
+) => {
+  const gnosisSafeProxyFactoryAddress = SILO_CONTRACTS["GNOSIS_SAFE_PROXY_FACTORY"][chainId] || ZERO_ADDRESS;
+  const masterCopyAddress = SILO_CONTRACTS["GNOSIS_SAFE_MASTER_COPY"][chainId];
+  const initializer = "0x00"
+  if (!isEthAddress(gnosisSafeProxyFactoryAddress) || !isEthAddress(masterCopyAddress)) {
+    throw new Error("Invalid address");
+  }
+  const gnosisSafeProxyFactory = createEthersContract({address: gnosisSafeProxyFactoryAddress, abi: safeFactoryAbi, chainId: chainId, rpcs: HAUS_RPC});
+  let expectedSafeAddress = ZERO_ADDRESS;
+  try {
+    await gnosisSafeProxyFactory.estimateGas.calculateCreateProxyWithNonceAddress(
+      masterCopyAddress,
+      initializer,
+      saltNonce,
+      {from: gnosisSafeProxyFactoryAddress}
+    );
+  } catch (e: any) {
+    expectedSafeAddress = getSafeAddressFromRevertMessage(e);
+  }
+
+  return expectedSafeAddress;
+}
+
+const getSafeAddressFromRevertMessage =  (e: any): string => {
+
+  console.log("e message", e);
+  let safeAddress;
+  if (e.error.error.data) {
+    console.log("get address")
+    safeAddress = ethers.utils.getAddress(e.error.error.data.slice(138, 178));
+    console.log("safeAddress", safeAddress)
+  } else {
+    let messages: string[] = e.error.split(' ');
+    console.log("messages", messages);
+    safeAddress = messages.find((m) => m.match(/^0x[a-fA-F0-9]{40,44}$/))?.replace(',', '') ?? ZERO_ADDRESS;
+  }
+  return safeAddress;
+}
+
+

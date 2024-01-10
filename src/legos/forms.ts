@@ -174,6 +174,15 @@ export const APP_FORM: Record<string, CustomFormLego> = {
           "Enter the NFT collection contract address below to whitelist them for the claim.",
         fields: [APP_FIELD.NFT_COLLECTION],
       },
+      {
+        id: "managerAccountSegment",
+        type: "formSegment",
+        title: "Manager Account",
+        description:
+          "Enter the account address.",
+        fields: [APP_FIELD.MANAGER_ACCOUNT],
+      },
+      APP_FIELD.SALT_NONCE_FIELD,
     ],
   },
 };
