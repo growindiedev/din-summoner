@@ -60,8 +60,9 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
   }
 
 
-  const saltNonce = (BigNumber.from(formValues["saltNonce"]).toHexString()) || "8441";
-  console.log("salt nonce", saltNonce);
+  const saltNonce = formValues["saltNonce"].toString() || "8441";
+  // const saltNonce = "748477608142858273151925";
+  console.log("salt nonce", saltNonce, isString(saltNonce));
 
   
 
@@ -483,7 +484,9 @@ const managerAccountConfigTX = (formValues: Record<string, unknown>, saltNonce: 
     0,
     ADD_MODULE,
   ]);
-  if (isString(encoded)) {
+  if (isString(encoded)) 
+  {
+    console.log("*******************", encoded, chainId, saltNonce);
     return encoded;
   }
   throw new Error("***********Encoding Error***************");
@@ -497,18 +500,21 @@ export const calculateCreateProxyWithNonceAddress = async (
 ) => {
   const gnosisSafeProxyFactoryAddress = SILO_CONTRACTS["GNOSIS_SAFE_PROXY_FACTORY"][chainId] || ZERO_ADDRESS;
   const masterCopyAddress = SILO_CONTRACTS["GNOSIS_SAFE_MASTER_COPY"][chainId];
-  const initializer = "0x00"
+  const baseSummoner = SILO_CONTRACTS["BASE_SUMMONER"][chainId];
+  const fixedLootSummoner = SILO_CONTRACTS["FIXED_LOOT_SUMMONER"][chainId];
+  const initializer = "0x";
   if (!isEthAddress(gnosisSafeProxyFactoryAddress) || !isEthAddress(masterCopyAddress)) {
     throw new Error("Invalid address");
   }
   const gnosisSafeProxyFactory = createEthersContract({address: gnosisSafeProxyFactoryAddress, abi: safeFactoryAbi, chainId: chainId, rpcs: HAUS_RPC});
   let expectedSafeAddress = ZERO_ADDRESS;
+  console.log("saltNonce in calculate", saltNonce)
   try {
     await gnosisSafeProxyFactory.estimateGas.calculateCreateProxyWithNonceAddress(
       masterCopyAddress,
       initializer,
       saltNonce,
-      {from: gnosisSafeProxyFactoryAddress}
+      {from: fixedLootSummoner}
     );
   } catch (e: any) {
     expectedSafeAddress = getSafeAddressFromRevertMessage(e);
@@ -533,4 +539,11 @@ const getSafeAddressFromRevertMessage =  (e: any): string => {
   return safeAddress;
 }
 
-
+export const getSaltNonce = (length = 32) => {
+  let text = '';
+  const possible = '0123456789';
+  for (let i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};

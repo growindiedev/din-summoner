@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Buildable, WrappedInput, Field } from "@daohaus/ui";
-import { EthAddress, getNonce, isEthAddress } from "@daohaus/utils";
+import { EthAddress, isEthAddress } from "@daohaus/utils";
+import { getSaltNonce } from "../../utils/summonTx";
 
 
 export const SaltNonce = (props: Buildable<Field>) => {
@@ -10,7 +11,7 @@ export const SaltNonce = (props: Buildable<Field>) => {
 
 
   useEffect(() => {
-    setValue(props.id, getNonce());
+    setValue(props.id, getSaltNonce());
     
   }, []);
 
