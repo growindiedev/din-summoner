@@ -61,8 +61,6 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
 
 
   const saltNonce = formValues["saltNonce"].toString() || "8441";
-  // const saltNonce = "748477608142858273151925";
-  console.log("salt nonce", saltNonce, isString(saltNonce));
 
   
 
@@ -474,18 +472,27 @@ const managerAccountConfigTX = (formValues: Record<string, unknown>, saltNonce: 
   console.log(">>>>>>>>>>>>>>. treasuryAddress", calculatedTreasuryAddress, isEthAddress(calculatedTreasuryAddress));
 
   console.log(">>>>>>>>>>>>>>. managerAccountAddress", managerAccountAddress);
+  
   const ADD_MODULE = encodeFunction(safeAbi, "enableModule", [
     managerAccountAddress
   ]);
   console.log("ADD_MODULE", ADD_MODULE);
 
+  const EXEC_TX_FROM_MODULE = encodeFunction(safeAbi, "execTransactionFromModule", [
+    calculatedTreasuryAddress, // to
+    "0", //value
+    ADD_MODULE, // data
+    "0", // operation
+  ]);
+  console.log("EXEC_TX_FROM_MODULE", EXEC_TX_FROM_MODULE);
+
   const encoded = encodeFunction(LOCAL_ABI.BAAL, "executeAsBaal", [
     calculatedTreasuryAddress as EthAddress,
     0,
-    ADD_MODULE,
+    EXEC_TX_FROM_MODULE,
   ]);
-  if (isString(encoded)) 
-  {
+  
+  if (isString(encoded)) {
     console.log("*******************", encoded, chainId, saltNonce);
     return encoded;
   }
@@ -500,21 +507,19 @@ export const calculateCreateProxyWithNonceAddress = async (
 ) => {
   const gnosisSafeProxyFactoryAddress = SILO_CONTRACTS["GNOSIS_SAFE_PROXY_FACTORY"][chainId] || ZERO_ADDRESS;
   const masterCopyAddress = SILO_CONTRACTS["GNOSIS_SAFE_MASTER_COPY"][chainId];
-  const baseSummoner = SILO_CONTRACTS["BASE_SUMMONER"][chainId];
-  const fixedLootSummoner = SILO_CONTRACTS["FIXED_LOOT_SUMMONER"][chainId];
   const initializer = "0x";
   if (!isEthAddress(gnosisSafeProxyFactoryAddress) || !isEthAddress(masterCopyAddress)) {
     throw new Error("Invalid address");
   }
   const gnosisSafeProxyFactory = createEthersContract({address: gnosisSafeProxyFactoryAddress, abi: safeFactoryAbi, chainId: chainId, rpcs: HAUS_RPC});
   let expectedSafeAddress = ZERO_ADDRESS;
-  console.log("saltNonce in calculate", saltNonce)
+
   try {
     await gnosisSafeProxyFactory.estimateGas.calculateCreateProxyWithNonceAddress(
       masterCopyAddress,
       initializer,
-      saltNonce,
-      {from: fixedLootSummoner}
+      BigNumber.from(saltNonce),
+      {from: gnosisSafeProxyFactoryAddress}
     );
   } catch (e: any) {
     expectedSafeAddress = getSafeAddressFromRevertMessage(e);
