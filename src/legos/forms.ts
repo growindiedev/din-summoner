@@ -39,6 +39,14 @@ export const APP_FORM: Record<string, CustomFormLego> = {
         ],
       },
       {
+        id: "nftCollectionSegment",
+        type: "formSegment",
+        title: "NFT Collection",
+        description:
+          "Enter the NFT collection contract address below to whitelist them for the claim.",
+        fields: [APP_FIELD.NFT_COLLECTION],
+      },
+      {
         id: "checkGateRender",
         type: "checkGateRender",
         gateLabel:
@@ -165,24 +173,27 @@ export const APP_FORM: Record<string, CustomFormLego> = {
           },
         ],
       },
-
       {
-        id: "nftCollectionSegment",
-        type: "formSegment",
-        title: "NFT Collection",
-        description:
-          "Enter the NFT collection contract address below to whitelist them for the claim.",
-        fields: [APP_FIELD.NFT_COLLECTION],
-      },
+        id: "managerCheckGateRender",
+        type: "checkGateRender",
+        gateLabel:
+          "Add Delegated Manager Account",
+        clearFieldIdsOnUnchecked: [
+          "managerAccountAddress"
+        ],
+        components: [
+          
       {
         id: "managerAccountSegment",
         type: "formSegment",
         title: "Manager Account",
         description:
-          "Enter the account address.",
+          "Delegated account to manage the DAO. Can be changed and or removed later.",
         fields: [APP_FIELD.MANAGER_ACCOUNT],
       },
       APP_FIELD.SALT_NONCE_FIELD,
+    ]
+  }
     ],
   },
 };

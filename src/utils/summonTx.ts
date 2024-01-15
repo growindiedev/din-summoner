@@ -263,6 +263,7 @@ const assembleLootTokenParams = ({
   return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
 };
 
+// Needs to be non transferable
 const assembleShareTokenParams = ({
   chainId,
   formValues,
@@ -370,12 +371,28 @@ const assembleInitActions = ({
 }) => {
   const { POSTER } = handleKeychains(chainId);
 
-  return [
-    // tokenConfigTX(DEFAULT_SUMMON_VALUES),
-    governanceConfigTX(DEFAULT_SUMMON_VALUES),
-    metadataConfigTX(formValues, POSTER),
-    managerAccountConfigTX(formValues, saltNonce, chainId),
-  ];
+  let initActions = [];
+  console.log("formValues ????????????/", formValues);
+  if(formValues["managerAccountAddress"] === undefined || 
+  formValues["managerAccountAddress"] === "" ||
+  formValues["managerAccountAddress"] === null ||
+  formValues["calculatedTreasuryAddress"] === undefined ||
+  formValues["calculatedTreasuryAddress"] === "" || 
+  formValues["calculatedTreasuryAddress"] === null) {
+    initActions = [
+      // tokenConfigTX(DEFAULT_SUMMON_VALUES),
+      governanceConfigTX(DEFAULT_SUMMON_VALUES),
+      metadataConfigTX(formValues, POSTER),
+    ]
+  } else {
+    initActions = [
+      // tokenConfigTX(DEFAULT_SUMMON_VALUES),
+      governanceConfigTX(DEFAULT_SUMMON_VALUES),
+      metadataConfigTX(formValues, POSTER),
+      managerAccountConfigTX(formValues, saltNonce, chainId),
+    ]
+  }
+  return initActions;
 };
 
 const governanceConfigTX = (formValues: SummonParams) => {
@@ -469,14 +486,10 @@ const managerAccountConfigTX = (formValues: Record<string, unknown>, saltNonce: 
   }
 
   // calculated address
-  console.log(">>>>>>>>>>>>>>. treasuryAddress", calculatedTreasuryAddress, isEthAddress(calculatedTreasuryAddress));
-
-  console.log(">>>>>>>>>>>>>>. managerAccountAddress", managerAccountAddress);
   
   const ADD_MODULE = encodeFunction(safeAbi, "enableModule", [
     managerAccountAddress
   ]);
-  console.log("ADD_MODULE", ADD_MODULE);
 
   const EXEC_TX_FROM_MODULE = encodeFunction(safeAbi, "execTransactionFromModule", [
     calculatedTreasuryAddress, // to
@@ -484,7 +497,7 @@ const managerAccountConfigTX = (formValues: Record<string, unknown>, saltNonce: 
     ADD_MODULE, // data
     "0", // operation
   ]);
-  console.log("EXEC_TX_FROM_MODULE", EXEC_TX_FROM_MODULE);
+  // console.log("EXEC_TX_FROM_MODULE", EXEC_TX_FROM_MODULE);
 
   const encoded = encodeFunction(LOCAL_ABI.BAAL, "executeAsBaal", [
     calculatedTreasuryAddress as EthAddress,
@@ -493,7 +506,6 @@ const managerAccountConfigTX = (formValues: Record<string, unknown>, saltNonce: 
   ]);
   
   if (isString(encoded)) {
-    console.log("*******************", encoded, chainId, saltNonce);
     return encoded;
   }
   throw new Error("***********Encoding Error***************");
@@ -530,15 +542,11 @@ export const calculateCreateProxyWithNonceAddress = async (
 
 const getSafeAddressFromRevertMessage =  (e: any): string => {
 
-  console.log("e message", e);
   let safeAddress;
   if (e.error.error.data) {
-    console.log("get address")
     safeAddress = ethers.utils.getAddress(e.error.error.data.slice(138, 178));
-    console.log("safeAddress", safeAddress)
   } else {
     let messages: string[] = e.error.split(' ');
-    console.log("messages", messages);
     safeAddress = messages.find((m) => m.match(/^0x[a-fA-F0-9]{40,44}$/))?.replace(',', '') ?? ZERO_ADDRESS;
   }
   return safeAddress;
