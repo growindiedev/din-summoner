@@ -81,4 +81,4 @@ export const DEFAULT_SUMMON_VALUES = {
   nvTransferable: true,
 };
 
-export const ADMIN_URL = "https://silohaus.github.io/silo-nft-dao-admin/";
+export const ADMIN_URL = "https://silohaus.github.io/silo-nft-dao-admin";
