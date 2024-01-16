@@ -498,41 +498,23 @@ const managerAccountConfigTX = (
     );
   }
 
-  // calculated address
-  let ADD_MODULE;
-  let EXEC_TX_FROM_MODULE;
+  // SafeAbi and SafeL2Abi are the same
+  // there is a different master copy and proxy factory for L2 though
+  const ADD_MODULE = encodeFunction(safeAbi, "enableModule", [
+    managerAccountAddress,
+  ]);
 
-  if (chainId === "0xa") {
-    ADD_MODULE = encodeFunction(safeL2Abi, "enableModule", [
-      managerAccountAddress,
-    ]);
+  const EXEC_TX_FROM_MODULE = encodeFunction(
+    safeAbi,
+    "execTransactionFromModule",
+    [
+      calculatedTreasuryAddress, // to
+      "0", //value
+      ADD_MODULE, // data
+      "0", // operation
+    ]
+  );
 
-    EXEC_TX_FROM_MODULE = encodeFunction(
-      safeL2Abi,
-      "execTransactionFromModule",
-      [
-        calculatedTreasuryAddress, // to
-        "0", //value
-        ADD_MODULE, // data
-        "0", // operation
-      ]
-    );
-  } else {
-    ADD_MODULE = encodeFunction(safeAbi, "enableModule", [
-      managerAccountAddress,
-    ]);
-
-    EXEC_TX_FROM_MODULE = encodeFunction(
-      safeAbi,
-      "execTransactionFromModule",
-      [
-        calculatedTreasuryAddress, // to
-        "0", //value
-        ADD_MODULE, // data
-        "0", // operation
-      ]
-    );
-  }
   // console.log("EXEC_TX_FROM_MODULE", EXEC_TX_FROM_MODULE);
 
   const encoded = encodeFunction(LOCAL_ABI.BAAL, "executeAsBaal", [
