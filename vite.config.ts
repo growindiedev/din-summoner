@@ -35,7 +35,7 @@ export default ({ mode }) => {
         },
       },
     },
-    base: "/silo-rdf-summoner/",
+    base: "/currator-summoner/",
     build: {
       target: ["es2020"],
     },

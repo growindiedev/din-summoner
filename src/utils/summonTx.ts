@@ -20,6 +20,7 @@ import {
 import { LOCAL_ABI } from "@daohaus/abis";
 import safeAbi from "../abis/safe.json";
 import safeL2Abi from "../abis/safeL2.json";
+import basicHOSSummoner from "../abis/basicHOSSummoner.json";
 
 import safeFactoryAbi from "../abis/safeFactory.json";
 
@@ -33,10 +34,11 @@ import {
   SHARE_NAME,
   SHARE_PER_NFT,
   SHARE_SYMBOL,
-  SILO_CONTRACTS,
+  CURRATOR_CONTRACTS,
 } from "./constants";
 import { createEthersContract } from "@daohaus/tx-builder";
 import { BigNumber, ethers } from "ethers";
+import { SaltNonce } from "../components/customFields/SaltNonce";
 
 export const calcAmountPerNft = ({
   lootTokenSupply,
@@ -56,11 +58,13 @@ export const calcAmountPerNft = ({
   return parseEther(loot.toString());
 };
 
-export const assembleLootSummonerArgs = (args: ArbitraryState) => {
+export const assembleCurratorSummonerArgs = (args: ArbitraryState) => {
+
+  const memberAddress = args.appState.memberAddress as EthAddress;
   const formValues = args.appState.formValues as Record<string, unknown>;
   const chainId = args.chainId as ValidNetwork;
   let txArgs: [string, string, string, string[], string];
-  console.log(">>>>>", formValues);
+  console.log(">>>>>", formValues, memberAddress, chainId);
 
   if (!isString(formValues["saltNonce"])) {
     throw new Error("Invalid nonce");
@@ -68,55 +72,7 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
 
   const saltNonce = formValues["saltNonce"].toString() || "8441";
 
-  if (
-    formValues["lootTokenName"] !== "" &&
-    formValues["lootTokenName"] !== undefined &&
-    formValues["lootTokenName"] !== null
-  ) {
-    // if any of the fields are empty throw an error
-    if (
-      formValues["lootTokenName"] === "" ||
-      formValues["lootTokenSymbol"] === "" ||
-      formValues["maxClaims"] === 0 ||
-      formValues["lootTokenSupply"] === 0 ||
-      formValues["airdropAllocation"] === 0
-    ) {
-      console.log("ERROR: Form Values", formValues);
-
-      throw new Error(
-        "Invalid form values. Please make sure all fields are filled out."
-      );
-    }
-
-    const initializationFixedLootTokenParams = assembleFixedLootTokenParams({
-      formValues,
-      chainId,
-    });
-
-    const initializationShareTokenParams = assembleShareTokenParams({
-      formValues,
-      chainId,
-    });
-
-    const initializationShamanParams = assembleShamanParams({
-      formValues,
-      chainId,
-    });
-
-    const postInitializationActions = assembleInitActions({
-      formValues,
-      chainId,
-      saltNonce,
-    });
-
-    txArgs = [
-      initializationFixedLootTokenParams,
-      initializationShareTokenParams,
-      initializationShamanParams,
-      postInitializationActions,
-      saltNonce,
-    ];
-  } else {
+    
     console.log(">>>>> no loot token name");
     const initializationLootTokenParams = assembleLootTokenParams({
       formValues,
@@ -126,11 +82,13 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
     const initializationShareTokenParams = assembleShareTokenParams({
       formValues,
       chainId,
+      memberAddress
     });
 
     const initializationShamanParams = assembleShamanParams({
       formValues,
       chainId,
+      memberAddress
     });
 
     const postInitializationActions = assembleInitActions({
@@ -146,7 +104,7 @@ export const assembleLootSummonerArgs = (args: ArbitraryState) => {
       postInitializationActions,
       saltNonce,
     ];
-  }
+  
 
   console.log("txArgs", txArgs);
 
@@ -162,7 +120,7 @@ const assembleFixedLootTokenParams = ({
 }) => {
   const tokenName = formValues["lootTokenName"];
   const tokenSymbol = formValues["lootTokenSymbol"];
-  const lootSingleton = SILO_CONTRACTS["FIXED_LOOT_SINGLETON"][chainId];
+  const lootSingleton = CURRATOR_CONTRACTS["FIXED_LOOT_SINGLETON"][chainId];
   const initialHolders = [] as EthAddress[];
   const lootTokenSupply = formValues["lootTokenSupply"];
   const airdropAllocation = formValues["airdropAllocation"];
@@ -209,7 +167,7 @@ const assembleLootTokenParamsNew = ({
   formValues: Record<string, unknown>;
   chainId: ValidNetwork;
 }) => {
-  const lootSingleton = SILO_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
+  const lootSingleton = CURRATOR_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
   const tokenName = formValues["lootTokenName"] as string;
   const tokenSymbol = formValues["lootTokenSymbol"] as string;
@@ -237,7 +195,7 @@ const assembleLootTokenParams = ({
   chainId: ValidNetwork;
   formValues: Record<string, unknown>;
 }) => {
-  const lootSingleton = SILO_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
+  const lootSingleton = CURRATOR_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
 
   if (!lootSingleton) {
@@ -270,9 +228,11 @@ const assembleLootTokenParams = ({
 const assembleShareTokenParams = ({
   chainId,
   formValues,
+  memberAddress
 }: {
   chainId: ValidNetwork;
   formValues: Record<string, unknown>;
+  memberAddress: EthAddress;
 }) => {
   const shareSingleton = CONTRACT_KEYCHAINS["SHARES_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
@@ -286,10 +246,12 @@ const assembleShareTokenParams = ({
   }
 
   const shareParams = encodeValues(
-    ["string", "string"],
+    ["string", "string", "address[]", "uint256[]"],
     [
       daoName + " " + SHARE_NAME,
       daoName.substring(0, 3).toUpperCase() + "-" + SHARE_SYMBOL,
+      [memberAddress],
+      ["1000000000000000000"],
     ]
   );
 
@@ -298,32 +260,25 @@ const assembleShareTokenParams = ({
 
 const assembleShamanParams = ({
   formValues,
+  memberAddress,
   chainId,
 }: {
   formValues: Record<string, unknown>;
+  memberAddress: EthAddress;
   chainId: ValidNetwork;
 }) => {
-  const nftAddress = formValues["nftContractAddress"];
-  const registryAddress = SILO_CONTRACTS["TBA_REGISTRY"][chainId];
-  const tbaImplementationAddress =
-    SILO_CONTRACTS["TBA_IMPLEMENTATION"][chainId];
-  const tbaProxyImplementationAddress =
-    SILO_CONTRACTS["TBA_PROXY_IMPLEMENTATION"][chainId];
-  const claimShamanSingleton =
-    SILO_CONTRACTS["CLAIM_SHAMAN_SINGLETON"][chainId];
-  const lootTokenSupply = formValues["lootTokenSupply"] || 0;
-  const airdropAllocation = formValues["airdropAllocation"] || 0;
-  const maxClaims = formValues["maxClaims"] || 0;
+
+  const nftCurratorShamanSingleton = CURRATOR_CONTRACTS["NFT_CURRATOR_SINGLETON"][chainId];
+  const price = formValues["collectorPrice"] as string;
+  const content = formValues["article"] as string;
+
+console.log("??????????", price, memberAddress, nftCurratorShamanSingleton, content);
+
 
   if (
-    !isEthAddress(nftAddress) ||
-    !registryAddress ||
-    !tbaImplementationAddress ||
-    !tbaProxyImplementationAddress ||
-    !isNumberish(maxClaims) ||
-    !isNumberish(lootTokenSupply) ||
-    !isNumberish(airdropAllocation) ||
-    !claimShamanSingleton
+    !isEthAddress(memberAddress) ||
+
+    !nftCurratorShamanSingleton
   ) {
     console.log("ERROR: Form Values", formValues);
 
@@ -332,36 +287,68 @@ const assembleShamanParams = ({
     );
   }
 
-  const lootPerNft =
-    Number(maxClaims) > 0
-      ? calcAmountPerNft({
-          lootTokenSupply,
-          airdropAllocation,
-          maxClaims,
-        })
-      : 0;
-
-  console.log("airdropAllocation", airdropAllocation);
-  console.log("lootTokenSupply", lootTokenSupply);
-  console.log("shaman maxClaims, lootPerNft", maxClaims, lootPerNft);
-
+  // 
   const shamanParams = encodeValues(
-    ["address", "address", "address", "address", "uint256", "uint256"],
+    ["string", "string", "uint256", "uint256", "uint256", "uint256", "address", "string"],
     [
-      nftAddress,
-      registryAddress,
-      tbaImplementationAddress,
-      tbaProxyImplementationAddress,
-      lootPerNft,
-      SHARE_PER_NFT,
+      "test",
+      "TOK",
+      "1000000000000000000",
+      "1000000000000000000",
+      price,
+      "5",
+      memberAddress,
+      assembleInitialContent({formValues, memberAddress, chainId})
     ]
   );
 
   return encodeValues(
     ["address[]", "uint256[]", "bytes[]"],
-    [[claimShamanSingleton], [CLAIM_SHAMAN_PERMISSIONS], [shamanParams]]
+    [[nftCurratorShamanSingleton], [CLAIM_SHAMAN_PERMISSIONS], [shamanParams]]
   );
 };
+
+function assembleInitialContent(
+  {
+    formValues,
+    memberAddress,
+    chainId,
+  }: {
+    formValues: Record<string, unknown>;
+    memberAddress: EthAddress;
+    chainId: ValidNetwork;
+  }
+) {
+  const daoName = formValues["daoName"] as string;
+  const calculatedDAOAddress = formValues["calculatedDAOAddress"] as string;
+  const body = formValues["article"] as string;
+  const headerImage = formValues["headerImage"] as string;
+
+  const content = {
+                daoId: calculatedDAOAddress || "0x00000000",
+                table: 'DIN',
+                queryType: 'list',
+                title: `${daoName} Incarnation`,
+                content: body,
+                contentURI: "",
+                contentURIType: "url",
+                imageURI: headerImage,
+                imageURIType: "url",
+                contentHash: "", // TODO: uuid, maybe use signature
+                sender: memberAddress,
+                version: "0.0.01", // version of the node schema
+                created: Date.now() / 1000, // creation time
+                context: "DIN",
+                scope: "Incarnation",
+                domain: "0x00000000",
+                parent: "0x00000000",
+                origin: "0x00000000",
+                signature: "", // signed encoded node for verification
+                chainId: chainId,
+              };
+  return JSON.stringify(content);
+
+}
 
 const assembleInitActions = ({
   formValues,
@@ -376,27 +363,12 @@ const assembleInitActions = ({
 
   let initActions = [];
   console.log("formValues ????????????/", formValues);
-  if (
-    formValues["managerAccountAddress"] === undefined ||
-    formValues["managerAccountAddress"] === "" ||
-    formValues["managerAccountAddress"] === null ||
-    formValues["calculatedTreasuryAddress"] === undefined ||
-    formValues["calculatedTreasuryAddress"] === "" ||
-    formValues["calculatedTreasuryAddress"] === null
-  ) {
+
     initActions = [
-      // tokenConfigTX(DEFAULT_SUMMON_VALUES),
       governanceConfigTX(DEFAULT_SUMMON_VALUES),
       metadataConfigTX(formValues, POSTER),
     ];
-  } else {
-    initActions = [
-      // tokenConfigTX(DEFAULT_SUMMON_VALUES),
-      governanceConfigTX(DEFAULT_SUMMON_VALUES),
-      metadataConfigTX(formValues, POSTER),
-      managerAccountConfigTX(formValues, saltNonce, chainId),
-    ];
-  }
+  
   return initActions;
 };
 
@@ -529,15 +501,38 @@ const managerAccountConfigTX = (
   throw new Error("***********Encoding Error***************");
 };
 
-// util to get the address of a safe before it is deployed
+export const calculateDAOAddress = async (
+  saltNonce: string,
+  chainId: ValidNetwork
+) => {
+  const nftCurratorSummoner = CURRATOR_CONTRACTS["NFT_CURRATOR_SUMMONER"][chainId] || ZERO_ADDRESS;
+  // calculateBaalAddress
 
+  console.log("nftCurratorSummoner", nftCurratorSummoner, chainId);
+
+  const hos = createEthersContract({
+    address: nftCurratorSummoner,
+    abi: basicHOSSummoner,
+    chainId: chainId,
+    rpcs: HAUS_RPC,
+  });
+  let expectedDAOAddress = await hos.callStatic.calculateBaalAddress(
+      saltNonce
+    );
+
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>expectedDAOAddress", expectedDAOAddress, ethers.utils.getAddress(expectedDAOAddress));
+
+  return ethers.utils.getAddress(expectedDAOAddress);
+}
+
+// util to get the address of a safe before it is deployed
 export const calculateCreateProxyWithNonceAddress = async (
   saltNonce: string,
   chainId: ValidNetwork
 ) => {
   const gnosisSafeProxyFactoryAddress =
-    SILO_CONTRACTS["GNOSIS_SAFE_PROXY_FACTORY"][chainId] || ZERO_ADDRESS;
-  const masterCopyAddress = SILO_CONTRACTS["GNOSIS_SAFE_MASTER_COPY"][chainId];
+    CURRATOR_CONTRACTS["GNOSIS_SAFE_PROXY_FACTORY"][chainId] || ZERO_ADDRESS;
+  const masterCopyAddress = CURRATOR_CONTRACTS["GNOSIS_SAFE_MASTER_COPY"][chainId];
   const initializer = "0x";
   if (
     !isEthAddress(gnosisSafeProxyFactoryAddress) ||

@@ -27,4 +27,8 @@ export const APP_FIELD: Record<string, CustomFieldLego> = {
     id: "saltNonce",
     type: "saltNonce",
   },
+  DAO_ADDRESS_FIELD: {
+    id: "calculatedDAOAddress",
+    type: "daoAddress",
+  },
 };

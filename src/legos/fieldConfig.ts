@@ -6,6 +6,7 @@ import { AmountPerNft } from "../components/customFields/AmountPerNft";
 import { CheckGateRender } from "../components/customFields/CheckGateMeme";
 import { ManagerAddress } from "../components/customFields/ManagerAddress";
 import { SaltNonce } from "../components/customFields/SaltNonce";
+import { DAOAddress } from "../components/customFields/DAOAddress";
 
 export const AppFieldLookup = {
   ...MolochFields,
@@ -14,6 +15,7 @@ export const AppFieldLookup = {
   spacerField: SpacerField,
   checkGateRender: CheckGateRender,
   managerAddress: ManagerAddress,
+  daoAddress: DAOAddress,
   saltNonce: SaltNonce
 };
 

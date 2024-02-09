@@ -9,7 +9,7 @@ import { IListQueryResults } from "@daohaus/data-fetch-utils";
 
 type PollFetch = (...args: any) => Promise<any>;
 
-export const pollLastTXSilo: PollFetch = async ({
+export const pollLastTX: PollFetch = async ({
   chainId,
   txHash,
   graphApiKeys,
@@ -18,6 +18,9 @@ export const pollLastTXSilo: PollFetch = async ({
   txHash: string;
   graphApiKeys: Keychain;
 }) => {
+  
+  console.log("polling txHash", txHash, chainId);
+  
   try {
     const result = await findTransaction({
       networkId: chainId,
@@ -25,16 +28,17 @@ export const pollLastTXSilo: PollFetch = async ({
       graphApiKeys,
     });
 
-    console.log("result", result);
+    console.log("poll result", result);
     if (result?.data?.transaction) {
       const daoRes = await listDaos({
         networkId: chainId,
         filter: {
-          id: result.data.transaction.daoAddress,
+          sharesAddress: result.data.transaction.daoAddress,
         },
       });
 
       if (daoRes?.items[0]) {
+        console.log("daoRes", daoRes);
         return daoRes;
       }
     }
@@ -44,7 +48,7 @@ export const pollLastTXSilo: PollFetch = async ({
   }
 };
 
-export const testLastTXSilo = (
+export const testLastTX = (
   daoRes: IListQueryResults<any, ListTxsQueryVariables> | undefined
 ) => {
   if (daoRes?.items[0]) {

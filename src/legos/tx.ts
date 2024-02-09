@@ -1,7 +1,7 @@
 import { POSTER_TAGS } from "@daohaus/utils";
 import { buildMultiCallTX } from "@daohaus/tx-builder";
 import { APP_CONTRACT } from "./contract";
-import { pollLastTXSilo, testLastTXSilo } from "../utils/customTxPoll";
+import { pollLastTX, testLastTX } from "../utils/customTxPoll";
 
 export enum ProposalTypeIds {
   Signal = "SIGNAL",
@@ -17,14 +17,14 @@ export enum ProposalTypeIds {
 }
 
 export const APP_TX = {
-  CLAIM_SUMMON: {
-    id: "CLAIM_SUMMON",
-    contract: APP_CONTRACT.CLAIM_SUMMONER,
+  CURRATOR_NFT_SUMMON: {
+    id: "CURRATOR_NFT_SUMMON",
+    contract: APP_CONTRACT.HOS_SUMMONER,
     method: "summonBaalFromReferrer",
-    argCallback: "assembleLootSummonerArgs",
+    argCallback: "assembleCurratorSummonerArgs",
     customPoll: {
-      fetch: pollLastTXSilo,
-      test: testLastTXSilo,
+      fetch: pollLastTX,
+      test: testLastTX,
     },
   },
 };

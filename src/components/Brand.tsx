@@ -27,7 +27,7 @@ export const Brand = () => {
   return (
     <Container>
       <BrandLink to="/">
-        <H5>SILO RDF SUMMONER</H5>
+        <H5>DIN SUMMONER</H5>
       </BrandLink>
     </Container>
   );
