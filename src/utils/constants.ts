@@ -11,7 +11,7 @@ export const CURRATOR_CONTRACTS: KeychainList = {
   NFT_CURRATOR_SUMMONER: {
     // "0x1": "0xb5a8838d27df4633894feaa4e5b902a874ec8e7e",
     // "0x5": "0x759ef79cfcc4f155052554ca7ff9c39b0e76abd1",
-    "0xaa36a7": "0x80453C56Af26802eFD8CC94B9feE849833D5b18C" // "0x4bb5d274dea3542bb836cba64bd7eed63233cb58"
+    "0xaa36a7": "0x80453c56af26802efd8cc94b9fee849833d5b18c" // "0x4bb5d274dea3542bb836cba64bd7eed63233cb58"
 
   },
   BASIC_HOS_SUMMONER: {
@@ -43,7 +43,7 @@ export const CURRATOR_CONTRACTS: KeychainList = {
   },
   NFT_CURRATOR_SINGLETON: {
     // "0x5": "0xb3dc8207075e9c7e78efb7148fb59b6f5da1dc28"
-    "0xaa36a7": "0x8dd2CA9f0Ae4f464bf5a0C2283FC5C84f16F2F8E", // "0x31cb4b142ed082147d4c71da0c3bbef0b6c0f3ae"
+    "0xaa36a7": "0x8dd2ca9f0ae4f464bf5a0c2283fc5c84f16f2f8e", // "0x31cb4b142ed082147d4c71da0c3bbef0b6c0f3ae"
   },
   CLAIM_SHAMAN_SINGLETON: {
     // "0x1": "0x80daee7a5322fbeb3f0f72531fdab5ed0f3e7333",
@@ -102,4 +102,4 @@ export const DEFAULT_SUMMON_VALUES = {
   nvTransferable: true,
 };
 
-export const ADMIN_URL = "https://silohaus.github.io/silo-nft-dao-admin";
+export const ADMIN_URL = "https://dinhaus.github.io/din-admin";
