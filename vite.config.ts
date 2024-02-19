@@ -36,7 +36,7 @@ export default ({ mode }) => {
         },
       },
     },
-    base: "/currator-summoner/",
+    base: "/din-summoner/",
     build: {
       target: ["es2020"],
     },
