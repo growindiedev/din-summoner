@@ -469,7 +469,7 @@ const introPostConfigTX = (formValues: SummonParams, memberAddress: EthAddress, 
 };
 
 const metadataConfigTX = (formValues: Record<string, unknown>, memberAddress: EthAddress, posterAddress: string) => {
-  const { daoName, calculatedDAOAddress, article: body, headerImage } = formValues;
+  const { daoName, calculatedDAOAddress, article: body, headerImage, description } = formValues;
   if (!isString(daoName)) {
     console.log("ERROR: Form Values", formValues);
     throw new Error("metadataTX recieved arguments in the wrong shape or type");
@@ -478,18 +478,16 @@ const metadataConfigTX = (formValues: Record<string, unknown>, memberAddress: Et
 
   const content = { 
                 name: daoName,
-                daoId: calculatedDAOAddress || "0x00000000",
+                daoId: calculatedDAOAddress,
                 table: 'daoProfile', // 'DIN',
                 queryType: 'list',
+                description: description || "",
+                longDescription: body || "",
+                avatarImg: headerImage || "",
                 title: `${daoName} Incarnation`,
-                description: body,
-                contentURI: "",
-                contentURIType: "url",
-                imageURI: headerImage,
-                imageURIType: "url",
-                contentHash: "", // TODO: uuid, maybe use signature
+                tags: ["DIN", "Incarnation"],
                 authorAddress: memberAddress,
-                parentId: 0
+                // parentId: 0
               };
 
   const METADATA = encodeFunction(LOCAL_ABI.POSTER, "post", [

@@ -16,9 +16,8 @@ export const APP_FORM: Record<string, CustomFormLego> = {
     submitButtonText: "Summon DIN",
     requiredFields: {
       daoName: true,
-      price: true,
-      article: true,
-      image: true
+      description: true,
+      collectorPrice: true
     },
     log: true,
     tx: APP_TX.CURRATOR_NFT_SUMMON,
@@ -33,6 +32,12 @@ export const APP_FORM: Record<string, CustomFormLego> = {
             label: "Publication Name",
             placeholder: "DAO Name",
           },
+          {
+            id: "description",
+            type: "input",
+            label: "Publication Short Description",
+            placeholder: "A short description of the DAO.",
+          },
         ],
       },
       {
@@ -46,10 +51,10 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       {
         id: "image",
         type: "input",
-        label: "Article Header Image",
+        label: "DAO Image Avatar",
         placeholder: "make sure image works",
         expectType: "url",
-        info: "Type something to kick it off.",
+        info: "icon, pfp or avatar.",
       },
       {
         id: "article",
