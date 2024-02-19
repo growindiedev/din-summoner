@@ -25,7 +25,7 @@ export const DAOAddress = (props: Buildable<Field>) => {
       if (!saltNonce || !chainId) return;
       const daoAddress = await calculateDAOAddress(saltNonce, chainId as ValidNetwork);
       console.log("daoAddress >>>>>>", props.id, daoAddress);
-      setValue(props.id, daoAddress);
+      setValue(props.id, daoAddress.toLowerCase());
     };
 
 

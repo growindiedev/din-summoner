@@ -31,4 +31,8 @@ export const APP_FIELD: Record<string, CustomFieldLego> = {
     id: "calculatedDAOAddress",
     type: "daoAddress",
   },
+  SHAMAN_ADDRESS_FIELD: {
+    id: "calculatedShamanAddress",
+    type: "shamanAddress",
+  },
 };

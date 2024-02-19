@@ -30,7 +30,7 @@ export const LayoutContainer = () => {
     <TXBuilder
       publicClient={publicClient}
       chainId={chainId}
-      appState={{ memberAddress: address }}
+      appState={{ memberAddress: address?.toLowerCase() }}
       argCallbackRecord={{
         assembleCurratorSummonerArgs: assembleCurratorSummonerArgs,
       }}

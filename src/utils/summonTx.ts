@@ -21,6 +21,8 @@ import { LOCAL_ABI } from "@daohaus/abis";
 import safeAbi from "../abis/safe.json";
 import safeL2Abi from "../abis/safeL2.json";
 import basicHOSSummoner from "../abis/basicHOSSummoner.json";
+import nftShamanHosSummoner from "../abis/nftShamanSummoner.json";
+import nftCurratorShaman from "../abis/nftCurratorShaman.json"
 
 import safeFactoryAbi from "../abis/safeFactory.json";
 
@@ -93,6 +95,7 @@ export const assembleCurratorSummonerArgs = (args: ArbitraryState) => {
 
     const postInitializationActions = assembleInitActions({
       formValues,
+      memberAddress,
       chainId,
       saltNonce,
     });
@@ -212,12 +215,10 @@ const assembleLootTokenParams = ({
   );
 
   const lootParams = encodeValues(
-    ["string", "string", "address[]", "uint256[]"],
+    ["string", "string"],
     [
       daoName + " " + LOOT_NAME,
-      daoName.substring(0, 3).toUpperCase() + "-" + LOOT_SYMBOL,
-      [],
-      [],
+      daoName.substring(0, 3).toUpperCase() + "-" + LOOT_SYMBOL
     ]
   );
 
@@ -246,12 +247,10 @@ const assembleShareTokenParams = ({
   }
 
   const shareParams = encodeValues(
-    ["string", "string", "address[]", "uint256[]"],
+    ["string", "string"],
     [
       daoName + " " + SHARE_NAME,
-      daoName.substring(0, 3).toUpperCase() + "-" + SHARE_SYMBOL,
-      [memberAddress],
-      ["1000000000000000000"],
+      daoName.substring(0, 3).toUpperCase() + "-" + SHARE_SYMBOL
     ]
   );
 
@@ -303,8 +302,8 @@ console.log("??????????", price, memberAddress, nftCurratorShamanSingleton, cont
   );
 
   return encodeValues(
-    ["address[]", "uint256[]", "bytes[]"],
-    [[nftCurratorShamanSingleton], [CLAIM_SHAMAN_PERMISSIONS], [shamanParams]]
+    ["address", "uint256", "bytes[]"],
+    [nftCurratorShamanSingleton, CLAIM_SHAMAN_PERMISSIONS, [shamanParams]]
   );
 };
 
@@ -323,28 +322,22 @@ function assembleInitialContent(
   const calculatedDAOAddress = formValues["calculatedDAOAddress"] as string;
   const body = formValues["article"] as string;
   const headerImage = formValues["headerImage"] as string;
+  const name = formValues["daoName"] as string;
 
-  const content = {
+  const content = { 
+                name: name,
                 daoId: calculatedDAOAddress || "0x00000000",
-                table: 'DIN',
+                table: 'daoProfile', // 'DIN',
                 queryType: 'list',
                 title: `${daoName} Incarnation`,
-                content: body,
+                description: body,
                 contentURI: "",
                 contentURIType: "url",
                 imageURI: headerImage,
                 imageURIType: "url",
                 contentHash: "", // TODO: uuid, maybe use signature
-                sender: memberAddress,
-                version: "0.0.01", // version of the node schema
-                created: Date.now() / 1000, // creation time
-                context: "DIN",
-                scope: "Incarnation",
-                domain: "0x00000000",
-                parent: "0x00000000",
-                origin: "0x00000000",
-                signature: "", // signed encoded node for verification
-                chainId: chainId,
+                authorAddress: memberAddress,
+                parentId: 0
               };
   return JSON.stringify(content);
 
@@ -352,10 +345,12 @@ function assembleInitialContent(
 
 const assembleInitActions = ({
   formValues,
+  memberAddress,
   chainId,
   saltNonce,
 }: {
   formValues: Record<string, unknown>;
+  memberAddress: EthAddress;
   chainId: ValidNetwork;
   saltNonce: string;
 }) => {
@@ -366,7 +361,11 @@ const assembleInitActions = ({
 
     initActions = [
       governanceConfigTX(DEFAULT_SUMMON_VALUES),
-      metadataConfigTX(formValues, POSTER),
+      metadataConfigTX(formValues, memberAddress, POSTER.toLowerCase()),
+      tokenConfigTX(),
+      tokenDistroTX(formValues, memberAddress),
+      // this will not be indexed as is. move intro post to metadataConfigTX
+      // introPostConfigTX(formValues, memberAddress, POSTER.toLowerCase(), chainId), 
     ];
   
   return initActions;
@@ -415,9 +414,9 @@ const governanceConfigTX = (formValues: SummonParams) => {
   throw new Error("Encoding Error");
 };
 
-const tokenConfigTX = (formValues: SummonParams) => {
-  const pauseVoteToken = !formValues.votingTransferable;
-  const pauseNvToken = !formValues.nvTransferable;
+const tokenConfigTX = () => {
+  const pauseVoteToken = true;
+  const pauseNvToken = true;
 
   const encoded = encodeFunction(LOCAL_ABI.BAAL, "setAdminConfig", [
     pauseVoteToken,
@@ -430,15 +429,31 @@ const tokenConfigTX = (formValues: SummonParams) => {
   throw new Error("Encoding Error");
 };
 
-const metadataConfigTX = (formValues: SummonParams, posterAddress: string) => {
+const tokenDistroTX = (formValues: SummonParams , memberAddress: EthAddress) => {
+
+  const shamanAddress = formValues.calculatedShamanAddress;
+
+  const encoded = encodeFunction(LOCAL_ABI.BAAL, "mintShares", [
+    [memberAddress, shamanAddress],
+    ["10000000000000000000", "10000000000000000000"]
+  ]);
+
+  if (isString(encoded)) {
+    return encoded;
+  }
+  throw new Error("Encoding Error");
+};
+
+const introPostConfigTX = (formValues: SummonParams, memberAddress: EthAddress, posterAddress: string, chainId: ValidNetwork) => {
   const { daoName } = formValues;
   if (!isString(daoName)) {
     console.log("ERROR: Form Values", formValues);
     throw new Error("metadataTX recieved arguments in the wrong shape or type");
   }
+  console.log("POSTER", posterAddress);
 
   const METADATA = encodeFunction(LOCAL_ABI.POSTER, "post", [
-    JSON.stringify({ name: daoName }),
+    assembleInitialContent({formValues, memberAddress, chainId}),
     POSTER_TAGS.summoner,
   ]);
 
@@ -447,6 +462,70 @@ const metadataConfigTX = (formValues: SummonParams, posterAddress: string) => {
     0,
     METADATA,
   ]);
+  if (isString(encoded)) {
+    return encoded;
+  }
+  throw new Error("Encoding Error");
+};
+
+const metadataConfigTX = (formValues: Record<string, unknown>, memberAddress: EthAddress, posterAddress: string) => {
+  const { daoName, calculatedDAOAddress, article: body, headerImage } = formValues;
+  if (!isString(daoName)) {
+    console.log("ERROR: Form Values", formValues);
+    throw new Error("metadataTX recieved arguments in the wrong shape or type");
+  }
+  console.log("POSTER", posterAddress);
+
+  const content = { 
+                name: daoName,
+                daoId: calculatedDAOAddress || "0x00000000",
+                table: 'daoProfile', // 'DIN',
+                queryType: 'list',
+                title: `${daoName} Incarnation`,
+                description: body,
+                contentURI: "",
+                contentURIType: "url",
+                imageURI: headerImage,
+                imageURIType: "url",
+                contentHash: "", // TODO: uuid, maybe use signature
+                authorAddress: memberAddress,
+                parentId: 0
+              };
+
+  const METADATA = encodeFunction(LOCAL_ABI.POSTER, "post", [
+    JSON.stringify(content),
+    POSTER_TAGS.summoner,
+  ]);
+
+  const encoded = encodeFunction(LOCAL_ABI.BAAL, "executeAsBaal", [
+    posterAddress,
+    0,
+    METADATA,
+  ]);
+  if (isString(encoded)) {
+    return encoded;
+  }
+  throw new Error("Encoding Error");
+};
+
+const initialContentTX = (formValues: SummonParams, memberAddress: EthAddress, chainId: ValidNetwork) => {
+
+  console.log("shaman >>>", formValues.calculatedShamanAddress);
+
+  const DATA = encodeFunction(nftCurratorShaman, "introPost", [
+    memberAddress,
+    assembleInitialContent({formValues, memberAddress, chainId}),
+  ]);
+
+  console.log("DATA >>>", DATA);
+
+  const encoded = encodeFunction(LOCAL_ABI.BAAL, "executeAsBaal", [
+    formValues.calculatedShamanAddress,
+    0,
+    DATA,
+  ]);
+
+  console.log("encoded >>>", encoded);
   if (isString(encoded)) {
     return encoded;
   }
@@ -523,6 +602,36 @@ export const calculateDAOAddress = async (
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>expectedDAOAddress", expectedDAOAddress, ethers.utils.getAddress(expectedDAOAddress));
 
   return ethers.utils.getAddress(expectedDAOAddress);
+}
+
+export const calculateShamanAddress= async (
+  saltNonce: string,
+  chainId: ValidNetwork
+) => {
+  const nftShamanSingleton = CURRATOR_CONTRACTS["NFT_CURRATOR_SINGLETON"][chainId] || ZERO_ADDRESS;
+  const nftShamanSummoner = CURRATOR_CONTRACTS["NFT_CURRATOR_SUMMONER"][chainId] || ZERO_ADDRESS;
+  const hos = createEthersContract({
+    address: nftShamanSummoner,
+    abi: nftShamanHosSummoner,
+    chainId: chainId,
+    rpcs: HAUS_RPC,
+  });
+  let expectedShamanAddress = ZERO_ADDRESS;
+
+  try {
+    expectedShamanAddress = await hos.callStatic.predictDeterministicShamanAddress(
+      nftShamanSingleton,
+      saltNonce
+    );
+    console.log(">>>>>>>>>>>>>> expectedShamanAddress", expectedShamanAddress);
+  
+  } catch (e: any) {
+
+    console.log("expectedShamanAddress error", e);
+  }
+
+  return expectedShamanAddress;
+
 }
 
 // util to get the address of a safe before it is deployed
