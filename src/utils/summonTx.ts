@@ -26,7 +26,7 @@ import nftCurratorShaman from "../abis/nftCurratorShaman.json"
 
 import safeFactoryAbi from "../abis/safeFactory.json";
 
-import { SummonParams, handleKeychains } from "@daohaus/contract-utils";
+import { handleKeychains } from "@daohaus/contract-utils";
 
 import {
   CLAIM_SHAMAN_PERMISSIONS,
@@ -58,6 +58,34 @@ export const calcAmountPerNft = ({
   const loot = BigInt(lootToShaman) / BigInt(maxClaims);
 
   return parseEther(loot.toString());
+};
+
+export type SummonParams = {
+  daoName?: string;
+  tokenName?: string;
+  tokenSymbol?: string;
+  lootTokenName?: string;
+  lootTokenSymbol?: string;
+  votingTransferable?: boolean;
+  nvTransferable?: boolean;
+  quorum?: string;
+  minRetention?: string;
+  sponsorThreshold?: string;
+  newOffering?: string;
+  votingPeriod?: string;
+  votingPeriodInSeconds?: number;
+  gracePeriod?: string;
+  gracePeriodInSeconds?: number;
+  shamans?: '' | {
+      shamanAddresses: string[];
+      shamanPermissions: string[];
+  };
+  members?: '' | {
+      memberAddresses: string[];
+      memberShares: string[];
+      memberLoot: string[];
+  };
+  calculatedShamanAddress?: string;
 };
 
 export const assembleCurratorSummonerArgs = (args: ArbitraryState) => {
