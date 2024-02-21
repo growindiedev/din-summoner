@@ -5,7 +5,7 @@ import { DaoHausNav, useDHConnect } from "@daohaus/connect";
 import { TXBuilder } from "@daohaus/tx-builder";
 import { Footer, MainLayout, OuterLayout, widthQuery } from "@daohaus/ui";
 import { Brand } from "./Brand";
-import { assembleCurratorSummonerArgs } from "../utils/summonTx";
+import { assembleCuratorSummonerArgs } from "../utils/summonTx";
 
 const Header = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ export const LayoutContainer = () => {
       chainId={chainId}
       appState={{ memberAddress: address?.toLowerCase() }}
       argCallbackRecord={{
-        assembleCurratorSummonerArgs: assembleCurratorSummonerArgs,
+        assembleCuratorSummonerArgs: assembleCuratorSummonerArgs,
       }}
     >
       <OuterLayout>

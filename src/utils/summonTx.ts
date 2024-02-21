@@ -22,7 +22,7 @@ import safeAbi from "../abis/safe.json";
 import safeL2Abi from "../abis/safeL2.json";
 import basicHOSSummoner from "../abis/basicHOSSummoner.json";
 import nftShamanHosSummoner from "../abis/nftShamanSummoner.json";
-import nftCurratorShaman from "../abis/nftCurratorShaman.json"
+import nftCuratorShaman from "../abis/nftCuratorShaman.json"
 
 import safeFactoryAbi from "../abis/safeFactory.json";
 
@@ -36,7 +36,7 @@ import {
   SHARE_NAME,
   SHARE_PER_NFT,
   SHARE_SYMBOL,
-  CURRATOR_CONTRACTS,
+  CURATOR_CONTRACTS,
 } from "./constants";
 import { createEthersContract } from "@daohaus/tx-builder";
 import { BigNumber, ethers } from "ethers";
@@ -88,7 +88,7 @@ export type SummonParams = {
   calculatedShamanAddress?: string;
 };
 
-export const assembleCurratorSummonerArgs = (args: ArbitraryState) => {
+export const assembleCuratorSummonerArgs = (args: ArbitraryState) => {
 
   const memberAddress = args.appState.memberAddress as EthAddress;
   const formValues = args.appState.formValues as Record<string, unknown>;
@@ -151,7 +151,7 @@ const assembleFixedLootTokenParams = ({
 }) => {
   const tokenName = formValues["lootTokenName"];
   const tokenSymbol = formValues["lootTokenSymbol"];
-  const lootSingleton = CURRATOR_CONTRACTS["FIXED_LOOT_SINGLETON"][chainId];
+  const lootSingleton = CURATOR_CONTRACTS["FIXED_LOOT_SINGLETON"][chainId];
   const initialHolders = [] as EthAddress[];
   const lootTokenSupply = formValues["lootTokenSupply"];
   const airdropAllocation = formValues["airdropAllocation"];
@@ -198,7 +198,7 @@ const assembleLootTokenParamsNew = ({
   formValues: Record<string, unknown>;
   chainId: ValidNetwork;
 }) => {
-  const lootSingleton = CURRATOR_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
+  const lootSingleton = CURATOR_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
   const tokenName = formValues["lootTokenName"] as string;
   const tokenSymbol = formValues["lootTokenSymbol"] as string;
@@ -226,7 +226,7 @@ const assembleLootTokenParams = ({
   chainId: ValidNetwork;
   formValues: Record<string, unknown>;
 }) => {
-  const lootSingleton = CURRATOR_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
+  const lootSingleton = CURATOR_CONTRACTS["GOV_LOOT_SINGLETON"][chainId];
   const daoName = formValues["daoName"] as string;
 
   if (!lootSingleton) {
@@ -295,17 +295,17 @@ const assembleShamanParams = ({
   chainId: ValidNetwork;
 }) => {
 
-  const nftCurratorShamanSingleton = CURRATOR_CONTRACTS["NFT_CURRATOR_SINGLETON"][chainId];
+  const nftCuratorShamanSingleton = CURATOR_CONTRACTS["NFT_CURATOR_SINGLETON"][chainId];
   const price = formValues["collectorPrice"] as string;
   const content = formValues["article"] as string;
 
-console.log("??????????", price, memberAddress, nftCurratorShamanSingleton, content);
+console.log("??????????", price, memberAddress, nftCuratorShamanSingleton, content);
 
 
   if (
     !isEthAddress(memberAddress) ||
 
-    !nftCurratorShamanSingleton
+    !nftCuratorShamanSingleton
   ) {
     console.log("ERROR: Form Values", formValues);
 
@@ -331,7 +331,7 @@ console.log("??????????", price, memberAddress, nftCurratorShamanSingleton, cont
 
   return encodeValues(
     ["address", "uint256", "bytes[]"],
-    [nftCurratorShamanSingleton, CLAIM_SHAMAN_PERMISSIONS, [shamanParams]]
+    [nftCuratorShamanSingleton, CLAIM_SHAMAN_PERMISSIONS, [shamanParams]]
   );
 };
 
@@ -538,7 +538,7 @@ const initialContentTX = (formValues: SummonParams, memberAddress: EthAddress, c
 
   console.log("shaman >>>", formValues.calculatedShamanAddress);
 
-  const DATA = encodeFunction(nftCurratorShaman, "introPost", [
+  const DATA = encodeFunction(nftCuratorShaman, "introPost", [
     memberAddress,
     assembleInitialContent({formValues, memberAddress, chainId}),
   ]);
@@ -610,13 +610,13 @@ export const calculateDAOAddress = async (
   saltNonce: string,
   chainId: ValidNetwork
 ) => {
-  const nftCurratorSummoner = CURRATOR_CONTRACTS["NFT_CURRATOR_SUMMONER"][chainId] || ZERO_ADDRESS;
+  const nftCuratorSummoner = CURATOR_CONTRACTS["NFT_CURATOR_SUMMONER"][chainId] || ZERO_ADDRESS;
   // calculateBaalAddress
 
-  console.log("nftCurratorSummoner", nftCurratorSummoner, chainId);
+  console.log("nftCuratorSummoner", nftCuratorSummoner, chainId);
 
   const hos = createEthersContract({
-    address: nftCurratorSummoner,
+    address: nftCuratorSummoner,
     abi: basicHOSSummoner,
     chainId: chainId,
     rpcs: HAUS_RPC,
@@ -634,8 +634,8 @@ export const calculateShamanAddress= async (
   saltNonce: string,
   chainId: ValidNetwork
 ) => {
-  const nftShamanSingleton = CURRATOR_CONTRACTS["NFT_CURRATOR_SINGLETON"][chainId] || ZERO_ADDRESS;
-  const nftShamanSummoner = CURRATOR_CONTRACTS["NFT_CURRATOR_SUMMONER"][chainId] || ZERO_ADDRESS;
+  const nftShamanSingleton = CURATOR_CONTRACTS["NFT_CURATOR_SINGLETON"][chainId] || ZERO_ADDRESS;
+  const nftShamanSummoner = CURATOR_CONTRACTS["NFT_CURATOR_SUMMONER"][chainId] || ZERO_ADDRESS;
   console.log("nftShaman", nftShamanSingleton, nftShamanSummoner, chainId);
   const hos = createEthersContract({
     address: nftShamanSummoner,
@@ -667,8 +667,8 @@ export const calculateCreateProxyWithNonceAddress = async (
   chainId: ValidNetwork
 ) => {
   const gnosisSafeProxyFactoryAddress =
-    CURRATOR_CONTRACTS["GNOSIS_SAFE_PROXY_FACTORY"][chainId] || ZERO_ADDRESS;
-  const masterCopyAddress = CURRATOR_CONTRACTS["GNOSIS_SAFE_MASTER_COPY"][chainId];
+    CURATOR_CONTRACTS["GNOSIS_SAFE_PROXY_FACTORY"][chainId] || ZERO_ADDRESS;
+  const masterCopyAddress = CURATOR_CONTRACTS["GNOSIS_SAFE_MASTER_COPY"][chainId];
   const initializer = "0x";
   if (
     !isEthAddress(gnosisSafeProxyFactoryAddress) ||

@@ -17,11 +17,11 @@ export enum ProposalTypeIds {
 }
 
 export const APP_TX = {
-  CURRATOR_NFT_SUMMON: {
-    id: "CURRATOR_NFT_SUMMON",
+  CURATOR_NFT_SUMMON: {
+    id: "CURATOR_NFT_SUMMON",
     contract: APP_CONTRACT.HOS_SUMMONER,
     method: "summonBaalFromReferrer",
-    argCallback: "assembleCurratorSummonerArgs",
+    argCallback: "assembleCuratorSummonerArgs",
     customPoll: {
       fetch: pollLastTX,
       test: testLastTX,

@@ -23,7 +23,7 @@ const Home = () => {
 
   return (
     <FormBuilder
-      form={APP_FORM.SUMMON_CURRATOR_NFT}
+      form={APP_FORM.SUMMON_CURATOR_NFT}
       customFields={AppFieldLookup}
       targetNetwork={chainId}
       submitButtonText="Summon NFT DAO"

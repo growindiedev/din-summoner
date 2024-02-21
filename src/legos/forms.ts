@@ -8,8 +8,8 @@ import { APP_TX } from "./tx";
 // move submitButtonText to lego level in package
 
 export const APP_FORM: Record<string, CustomFormLego> = {
-  SUMMON_CURRATOR_NFT: {
-    id: "SUMMON_CURRATOR_NFT",
+  SUMMON_CURATOR_NFT: {
+    id: "SUMMON_CURATOR_NFT",
     title: "Summon a DIN Topic",
     description:
       "Start Your own Decentralized Inteligence Network. You will be the first curator of this Topic.",
@@ -20,7 +20,7 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       collectorPrice: true
     },
     log: true,
-    tx: APP_TX.CURRATOR_NFT_SUMMON,
+    tx: APP_TX.CURATOR_NFT_SUMMON,
     fields: [
       {
         id: "nameSegment",
