@@ -10,9 +10,9 @@ import { APP_TX } from "./tx";
 export const APP_FORM: Record<string, CustomFormLego> = {
   SUMMON_CURRATOR_NFT: {
     id: "SUMMON_CURRATOR_NFT",
-    title: "Summon a Currator DIN DAO",
+    title: "Summon a DIN Topic",
     description:
-      "Start Your own Decentralixed Inteligence Network.",
+      "Start Your own Decentralized Inteligence Network. You will be the first curator of this Topic.",
     submitButtonText: "Summon DIN",
     requiredFields: {
       daoName: true,
@@ -29,13 +29,13 @@ export const APP_FORM: Record<string, CustomFormLego> = {
           {
             id: "daoName",
             type: "input",
-            label: "Publication Name",
-            placeholder: "DAO Name",
+            label: "Topic Name",
+            placeholder: "A short name for the topic.",
           },
           {
             id: "description",
             type: "input",
-            label: "Publication Short Description",
+            label: "Topic Short Description",
             placeholder: "A short description of the DAO.",
           },
         ],
@@ -46,20 +46,20 @@ export const APP_FORM: Record<string, CustomFormLego> = {
         label: "Initial Price",
         placeholder: ".00069,420",
         expectType: "number",
-        info: "The initial price of the collector NFT. Can be changed by the org later.",
+        info: "The initial price (in chain native token ex. ETH) of the collector NFTs. Can be changed by the org later.",
       },
       {
         id: "image",
         type: "input",
         label: "DAO Image Avatar",
-        placeholder: "make sure image works",
+        placeholder: "make sure image url is availible. IPFS gatways supported",
         expectType: "url",
         info: "icon, pfp or avatar.",
       },
       {
         id: "article",
         type: "markdownField",
-        label: "Introduction Article",
+        label: "Introduction",
         placeholder: "# We Currate and Collect....\n## We are the future of media.\nThis is a markdown editor.",
         info: "Type something to kick it off.",
       },

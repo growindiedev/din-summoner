@@ -636,6 +636,7 @@ export const calculateShamanAddress= async (
 ) => {
   const nftShamanSingleton = CURRATOR_CONTRACTS["NFT_CURRATOR_SINGLETON"][chainId] || ZERO_ADDRESS;
   const nftShamanSummoner = CURRATOR_CONTRACTS["NFT_CURRATOR_SUMMONER"][chainId] || ZERO_ADDRESS;
+  console.log("nftShaman", nftShamanSingleton, nftShamanSummoner, chainId);
   const hos = createEthersContract({
     address: nftShamanSummoner,
     abi: nftShamanHosSummoner,
