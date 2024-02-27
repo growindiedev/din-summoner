@@ -22,9 +22,9 @@ export const APP_TX = {
     contract: APP_CONTRACT.HOS_SUMMONER,
     method: "summonBaalFromReferrer",
     argCallback: "assembleCuratorSummonerArgs",
-    customPoll: {
-      fetch: pollLastTX,
-      test: testLastTX,
-    },
+    // customPoll: {
+    //   fetch: pollLastTX,
+    //   test: testLastTX,
+    // },
   },
 };
