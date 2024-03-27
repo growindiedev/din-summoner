@@ -43,7 +43,7 @@ export const CURATOR_CONTRACTS: KeychainList = {
   },
   NFT_CURATOR_SINGLETON: {
     // "0x5": "0xb3dc8207075e9c7e78efb7148fb59b6f5da1dc28"
-    "0xaa36a7": "0xeece40a7492efe0598e466ff501530feaddd501d", // "0x31cb4b142ed082147d4c71da0c3bbef0b6c0f3ae"
+    "0xaa36a7": "0xec0d1f8baed05ed6516fe0f9304566115f2dbbde", // "0xeece40a7492efe0598e466ff501530feaddd501d", // "0x31cb4b142ed082147d4c71da0c3bbef0b6c0f3ae"
   },
   CLAIM_SHAMAN_SINGLETON: {
     // "0x1": "0x80daee7a5322fbeb3f0f72531fdab5ed0f3e7333",

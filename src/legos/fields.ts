@@ -35,4 +35,8 @@ export const APP_FIELD: Record<string, CustomFieldLego> = {
     id: "calculatedShamanAddress",
     type: "shamanAddress",
   },
+  PARAM_TAG_FIELD: {
+    id: "paramTag",
+    type: "paramTag",
+  },
 };

@@ -1,14 +1,16 @@
 import { Routes as Router, Route } from "react-router-dom";
 
-import Home from "./pages/Home";
+import Summon from "./pages/Summon";
 import Success from "./pages/Success";
 import { LayoutContainer } from "./components/LayoutContainer";
+import Landing from "./pages/Landing";
 
 export const Routes = () => {
   return (
     <Router>
       <Route path="/" element={<LayoutContainer />}>
-        <Route index element={<Home />} />
+        <Route index element={<Landing />} />
+        <Route path={`summon/:tag`} element={<Summon/>} />
         <Route path={`success/:daoId`} element={<Success />} />
       </Route>
     </Router>

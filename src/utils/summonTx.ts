@@ -355,7 +355,7 @@ function assembleInitialContent(
   const content = { 
                 name: name,
                 daoId: calculatedDAOAddress || "0x00000000",
-                table: 'daoProfile', // 'DIN',
+                table: 'daoProfile', 
                 queryType: 'list',
                 title: `${daoName} Incarnation`,
                 description: body,
@@ -459,11 +459,11 @@ const tokenConfigTX = () => {
 
 const tokenDistroTX = (formValues: SummonParams , memberAddress: EthAddress) => {
 
-  const shamanAddress = formValues.calculatedShamanAddress;
+  // const shamanAddress = formValues.calculatedShamanAddress;
 
   const encoded = encodeFunction(LOCAL_ABI.BAAL, "mintShares", [
-    [memberAddress, shamanAddress],
-    ["10000000000000000000", "10000000000000000000"]
+    [memberAddress],
+    ["10000000000000000000"]
   ]);
 
   if (isString(encoded)) {
@@ -497,7 +497,7 @@ const introPostConfigTX = (formValues: SummonParams, memberAddress: EthAddress, 
 };
 
 const metadataConfigTX = (formValues: Record<string, unknown>, memberAddress: EthAddress, posterAddress: string) => {
-  const { daoName, calculatedDAOAddress, article: body, headerImage, description } = formValues;
+  const { daoName, calculatedDAOAddress, article: body, headerImage, description, paramTag } = formValues;
   if (!isString(daoName)) {
     console.log("ERROR: Form Values", formValues);
     throw new Error("metadataTX recieved arguments in the wrong shape or type");
@@ -507,13 +507,13 @@ const metadataConfigTX = (formValues: Record<string, unknown>, memberAddress: Et
   const content = { 
                 name: daoName,
                 daoId: calculatedDAOAddress,
-                table: 'daoProfile', // 'DIN',
+                table: 'daoProfile', 
                 queryType: 'list',
                 description: description || "",
                 longDescription: body || "",
                 avatarImg: headerImage || "",
                 title: `${daoName} Incarnation`,
-                tags: ["DIN", "Incarnation"],
+                tags: ["DIN", "Incarnation", paramTag || "topic"],
                 authorAddress: memberAddress,
                 // parentId: 0
               };

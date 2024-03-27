@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { FormBuilder } from "@daohaus/form-builder";
 import { APP_FORM } from "../legos/forms";
@@ -6,7 +6,7 @@ import { AppFieldLookup } from "../legos/fieldConfig";
 import { useDHConnect } from "@daohaus/connect";
 import { useState } from "react";
 import styled from "styled-components";
-import { Link } from "@daohaus/ui";
+import { Link, SingleColumnLayout } from "@daohaus/ui";
 import { ADMIN_URL } from "../utils/constants";
 
 const LinkButton = styled(Link)`
@@ -17,7 +17,7 @@ const LinkButton = styled(Link)`
   }
 `;
 
-const Home = () => {
+const Summon = () => {
   const navigate = useNavigate();
   const { chainId } = useDHConnect();
   const [txSuccess, setTxSuccess] = useState(false);
@@ -36,7 +36,7 @@ const Home = () => {
   console.log("chainId", chainId);
 
   return (
-    <>
+    <SingleColumnLayout>
       <FormBuilder
         form={APP_FORM.SUMMON_CURATOR_NFT}
         customFields={AppFieldLookup}
@@ -57,10 +57,10 @@ const Home = () => {
         target="_blank"
         href={`${ADMIN_URL}`}
       >
-        Go to Hub
+        Go to Topic List
       </LinkButton>}
-    </>
+    </SingleColumnLayout>
   );
 };
 
-export default Home;
+export default Summon;
