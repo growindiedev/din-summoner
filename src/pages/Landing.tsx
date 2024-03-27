@@ -25,7 +25,10 @@ const Landing = () => {
   return (
     <>
       {chainId && chainId in supportedNetorks ? (
-        <BiColumnLayout left={(
+        <BiColumnLayout 
+        subtitle="Welcome to the DIN summoner"
+        title="DIN- Decentralized Information Netowrk"
+        left={(
           <div>
             <h1>Create Topic Hub</h1>
             <p>
@@ -56,9 +59,8 @@ const Landing = () => {
               </ExternalLinkButton>
             </div>
           )}
-        >
+        />
 
-        </BiColumnLayout>
       ) :
         (
           <div>
