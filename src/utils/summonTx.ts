@@ -86,12 +86,13 @@ export type SummonParams = {
       memberLoot: string[];
   };
   calculatedShamanAddress?: string;
+  tags?: string[];
 };
 
 export const assembleCuratorSummonerArgs = (args: ArbitraryState) => {
 
   const memberAddress = args.appState.memberAddress as EthAddress;
-  const formValues = args.appState.formValues as Record<string, unknown>;
+  const formValues = args.appState.formValues as FormValuesWithTags;
   const chainId = args.chainId as ValidNetwork;
   let txArgs: [string, string, string, string[], string];
   console.log(">>>>>", formValues, memberAddress, chainId);
@@ -371,13 +372,17 @@ function assembleInitialContent(
 
 }
 
+interface FormValuesWithTags extends Record<string, unknown> {
+  tags: string[];
+}
+
 const assembleInitActions = ({
   formValues,
   memberAddress,
   chainId,
   saltNonce,
 }: {
-  formValues: Record<string, unknown>;
+  formValues: FormValuesWithTags;
   memberAddress: EthAddress;
   chainId: ValidNetwork;
   saltNonce: string;
@@ -496,11 +501,7 @@ const introPostConfigTX = (formValues: SummonParams, memberAddress: EthAddress, 
   throw new Error("Encoding Error");
 };
 
-interface FormValues extends Record<string, unknown> {
-  tags: string[];
-}
-
-const metadataConfigTX = (formValues: FormValues, memberAddress: EthAddress, posterAddress: string) => {
+const metadataConfigTX = (formValues: FormValuesWithTags, memberAddress: EthAddress, posterAddress: string) => {
   const { daoName, calculatedDAOAddress, article: body, headerImage, description, paramTag, tags } = formValues;
   if (!isString(daoName)) {
     console.log("ERROR: Form Values", formValues);
