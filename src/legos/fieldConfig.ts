@@ -9,6 +9,7 @@ import { SaltNonce } from "../components/customFields/SaltNonce";
 import { DAOAddress } from "../components/customFields/DAOAddress";
 import { ShamanAddress } from "../components/customFields/ShamanAddress";
 import { ParamTag } from "../components/customFields/ParamTag";
+import { MultiSelect } from "../components/customFields/MultiSelect";
 
 export const AppFieldLookup = {
   ...MolochFields,
@@ -20,7 +21,8 @@ export const AppFieldLookup = {
   daoAddress: DAOAddress,
   shamanAddress: ShamanAddress,
   saltNonce: SaltNonce,
-  paramTag: ParamTag
+  paramTag: ParamTag,
+  multiSelect: MultiSelect,
 };
 
 export type CustomFieldLego = FieldLegoBase<typeof AppFieldLookup>;

@@ -14,6 +14,7 @@
     "@daohaus/connect": "^0.4.1",
     "@daohaus/connect-context": "^0.4.1",
     "@daohaus/contract-utils": "^0.4.1",
+    "@daohaus/data-fetch-utils": "^0.4.1",
     "@daohaus/form-builder": "^0.4.1",
     "@daohaus/form-builder-base": "^0.4.1",
     "@daohaus/keychain-utils": "^0.4.1",
@@ -24,14 +25,14 @@
     "@daohaus/moloch-v3-macro-ui": "^0.4.1",
     "@daohaus/profile-data": "^0.4.1",
     "@daohaus/tx-builder": "^0.4.1",
-    "@daohaus/data-fetch-utils": "^0.4.1",
     "@daohaus/ui": "^0.4.1",
     "@daohaus/utils": "^0.4.1",
     "ethers": "^5.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
-    "react-router-dom": "^6.4.3"
+    "react-router-dom": "^6.4.3",
+    "react-select": "^5.8.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.22",

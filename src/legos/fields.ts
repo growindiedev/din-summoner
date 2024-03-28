@@ -39,4 +39,8 @@ export const APP_FIELD: Record<string, CustomFieldLego> = {
     id: "paramTag",
     type: "paramTag",
   },
+  TAGS_MULTISELECT_FIELD: {
+    id: 'tags',
+    type: 'multiSelect',
+  },
 };

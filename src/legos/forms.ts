@@ -67,6 +67,7 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       APP_FIELD.DAO_ADDRESS_FIELD,
       APP_FIELD.SHAMAN_ADDRESS_FIELD,
       APP_FIELD.PARAM_TAG_FIELD,
+      APP_FIELD.TAGS_MULTISELECT_FIELD,
       {
         id: "parentCheckGateRender",
         type: "checkGateRender",

@@ -496,8 +496,12 @@ const introPostConfigTX = (formValues: SummonParams, memberAddress: EthAddress, 
   throw new Error("Encoding Error");
 };
 
-const metadataConfigTX = (formValues: Record<string, unknown>, memberAddress: EthAddress, posterAddress: string) => {
-  const { daoName, calculatedDAOAddress, article: body, headerImage, description, paramTag } = formValues;
+interface FormValues extends Record<string, unknown> {
+  tags: string[];
+}
+
+const metadataConfigTX = (formValues: FormValues, memberAddress: EthAddress, posterAddress: string) => {
+  const { daoName, calculatedDAOAddress, article: body, headerImage, description, paramTag, tags } = formValues;
   if (!isString(daoName)) {
     console.log("ERROR: Form Values", formValues);
     throw new Error("metadataTX recieved arguments in the wrong shape or type");
@@ -513,7 +517,7 @@ const metadataConfigTX = (formValues: Record<string, unknown>, memberAddress: Et
                 longDescription: body || "",
                 avatarImg: headerImage || "",
                 title: `${daoName} Incarnation`,
-                tags: ["DIN", "Incarnation", paramTag || "topic"],
+                tags: ["DIN", "Incarnation", paramTag || "topic", ...tags],
                 authorAddress: memberAddress,
                 // parentId: 0
               };
