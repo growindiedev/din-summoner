@@ -9,6 +9,8 @@ import { HAUS_NETWORK_DATA } from "@daohaus/keychain-utils";
 
 import { Routes } from "./Routes";
 
+import { dinDarkTheme } from "./themes/dark";
+
 import "./App.css";
 
 // import { Buffer } from "buffer";
@@ -30,7 +32,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <HashRouter>
       <QueryClientProvider client={queryClient}>
         <DHConnectProvider networks={supportedNetorks}>
-          <HausThemeProvider>
+          <HausThemeProvider defaultDark={dinDarkTheme}>
             <Routes />
           </HausThemeProvider>
         </DHConnectProvider>
