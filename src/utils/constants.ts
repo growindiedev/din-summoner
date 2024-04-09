@@ -1,5 +1,7 @@
 import { KeychainList } from "@daohaus/keychain-utils";
 
+export const NFT_DAO_REFERRER = "DHNFTCuratorShamanSummonerV0.3"; 
+
 export const CURATOR_CONTRACTS: KeychainList = {
   FIXED_LOOT_SUMMONER: {
     // "0x1": "0xb5a8838d27df4633894feaa4e5b902a874ec8e7e",
