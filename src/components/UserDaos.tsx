@@ -53,6 +53,10 @@ export const UserDaos = () => {
         , [chainId, isConnected, address]);
 
 
+    const hasPersonalHub = () => {
+        // check if tags array in all daos contain "personal"
+        return daoData.some(dao => dao.tags?.includes("personal") ?? false);
+    }
 
     return (
         <div>
@@ -65,7 +69,7 @@ export const UserDaos = () => {
                     {...dao}
                 />
             ))}
-            {daoData.length == 0 && (<>
+            {daoData.length == 0 || !hasPersonalHub() &&  (<>
                 <h2>Create Personal Hub</h2>
               <p>
                 The fun starts with your own personal hub.
