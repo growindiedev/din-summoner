@@ -18,6 +18,7 @@ import { useDHConnect } from "@daohaus/connect";
 import ReactMarkdown from "react-markdown";
 import { Link } from "react-router-dom";
 import { ButtonRouterLink } from "./ButtonRouterLink";
+import { ADMIN_URL } from "../utils/constants";
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -106,7 +107,7 @@ export const DaoCard = ({
             )}
           </div>
         </div>
-        <StyledLink to={`/molochv3/${chainIdLocal}/${id}/articles`}><ParLg className="dao-title">
+        <StyledLink to={`${ADMIN_URL}/#/molochv3/${chainIdLocal}/${id}/articles`}><ParLg className="dao-title">
           {name ? charLimit(name, 31) : charLimit(id, 31)}{" "}
         </ParLg></StyledLink>
         <div className="stats-box">
@@ -132,15 +133,6 @@ export const DaoCard = ({
           )}
         </div>
 
-        {tags?.length && (<div class-name="tag-box">
-          <ParSm>Tags:</ParSm>
-          {tags.map((tag) => (
-            <Tag key={tag} tagColor="blue">
-              {tag}
-            </Tag>
-          ))}
-        </div>)}
-
         {/* <div className="tag-box">
           <Tag tagColor="red">{getNetworkName(chainIdLocal || DEFAULT_NETWORK_ID)}</Tag>
         </div> */}
@@ -148,26 +140,34 @@ export const DaoCard = ({
       {description && (<div className="description-box">
         <ReactMarkdown>{description}</ReactMarkdown>
       </div>)}
-      <div className="button-box">
+      {tags?.length && (<div class-name="tag-box">
+          <ParSm>Tags:</ParSm>
+          {tags.map((tag) => (
+            <Tag key={tag} tagColor="blue">
+              {tag}
+            </Tag>
+          ))}
+        </div>)}
+      {/* <div className="button-box">
       <ButtonRouterLink
           color="secondary"
-          to={`/molochv3/${chainIdLocal}/${id}/articles`}
+          to={`${ADMIN_URL}/#/molochv3/${chainIdLocal}/${id}/articles`}
         >
           Feed
         </ButtonRouterLink>
         <ButtonRouterLink
           color="secondary"
-          to={`/molochv3/${chainIdLocal}/${id}`}
+          to={`${ADMIN_URL}/#/molochv3/${chainIdLocal}/${id}`}
         >
           Currator Dashboard
         </ButtonRouterLink>
         <ButtonRouterLink
           color="secondary"
-          to={`/molochv3/${chainIdLocal}/${id}/polls`}
+          to={`${ADMIN_URL}/#/molochv3/${chainIdLocal}/${id}/polls`}
         >
           Collector Dashboard
         </ButtonRouterLink>
-      </div>
+      </div> */}
     </StyledDaoCard>
   );
 };
