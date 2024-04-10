@@ -69,14 +69,14 @@ export const UserDaos = () => {
                     {...dao}
                 />
             ))}
-            {daoData.length == 0 || !hasPersonalHub() &&  (<>
+            {(daoData.length == 0 || !hasPersonalHub()) && (<>
                 <h2>Create Personal Hub</h2>
-              <p>
-                The fun starts with your own personal hub.
-              </p>
-              <LinkButton to={`/summon/personal`} >
-                <Button variant="outline">Summon a Personal Hub</Button>
-            </LinkButton></>)}
+                <p>
+                    The fun starts with your own personal hub.
+                </p>
+                <LinkButton to={`/summon/personal`} >
+                    <Button variant="outline">Summon a Personal Hub</Button>
+                </LinkButton></>)}
         </div>
     )
 
