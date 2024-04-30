@@ -25,8 +25,11 @@ const StyledLink = styled(Link)`
   color: inherit;
 `;
 
-const StyledDaoCard = styled.div`
-  background-color: ${(props) => props.theme.secondary.step2};
+const StyledDaoCard = styled.div<{ isPersonalHub?: boolean }>`
+  background-color: ${(props) =>
+    props.isPersonalHub
+      ? props.theme.secondary.step4
+      : props.theme.secondary.step2};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -92,7 +95,10 @@ export const DaoCard = ({
   const chainIdLocal = chainId;
 
   return (
-    <StyledDaoCard className="dao-card">
+    <StyledDaoCard
+      className="dao-card"
+      isPersonalHub={tags?.includes("personal")}
+    >
       <div className="top-row">
         <div className="top-box">
           <div className="alert-box">
