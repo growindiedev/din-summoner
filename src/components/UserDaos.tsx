@@ -1,4 +1,3 @@
-
 import { useDHConnect } from "@daohaus/connect";
 import styled from "styled-components";
 import { BiColumnLayout, Button, Link } from "@daohaus/ui";
@@ -24,62 +23,57 @@ const ExternalLinkButton = styled(Link)`
   }
 `;
 
+const InsideConatiner = styled.div`
+  > * {
+    margin-bottom: 2rem;
+  }
+`;
 
 export const UserDaos = () => {
-    const { chainId, isConnected, address } = useDHConnect();
-    const [daoData, setDaoData] = useState<ListDaosQueryResDaos>([]);
+  const { chainId, isConnected, address } = useDHConnect();
+  const [daoData, setDaoData] = useState<ListDaosQueryResDaos>([]);
 
-
-
-    useEffect(() => {
-        if (!isConnected || !address) {
-            return;
-        }
-
-        const fetchDaos = async () => {
-            const query = await listDaos({
-                networkId: chainId as ValidNetwork,
-                filter: {
-                    referrer: NFT_DAO_REFERRER,
-                    createdBy: address,
-                },
-            });
-            setDaoData(query.items);
-            console.log("daos", daoData);
-        };
-
-        fetchDaos();
-    }
-        , [chainId, isConnected, address]);
-
-
-    const hasPersonalHub = () => {
-        // check if tags array in all daos contain "personal"
-        return daoData.some(dao => dao.tags?.includes("personal") ?? false);
+  useEffect(() => {
+    if (!isConnected || !address) {
+      return;
     }
 
-    return (
-        <div>
-            <h2>Your Hubs</h2>
+    const fetchDaos = async () => {
+      const query = await listDaos({
+        networkId: chainId as ValidNetwork,
+        filter: {
+          referrer: NFT_DAO_REFERRER,
+          createdBy: address,
+        },
+      });
+      setDaoData(query.items);
+      console.log("daos", daoData);
+    };
 
-            {daoData?.map(dao => (
-                <DaoCard
-                    key={dao.id}
+    fetchDaos();
+  }, [chainId, isConnected, address]);
 
-                    {...dao}
-                />
-            ))}
-            {(daoData.length == 0 || !hasPersonalHub()) && (<>
-                <h2>Create Personal Hub</h2>
-                <p>
-                    The fun starts with your own personal hub.
-                </p>
-                <LinkButton to={`/summon/personal`} >
-                    <Button variant="outline">Summon a Personal Hub</Button>
-                </LinkButton></>)}
-        </div>
-    )
+  const hasPersonalHub = () => {
+    // check if tags array in all daos contain "personal"
+    return daoData.some((dao) => dao.tags?.includes("personal") ?? false);
+  };
 
+  return (
+    <InsideConatiner>
+      <h2>Your Hubs</h2>
 
-
+      {daoData?.map((dao) => (
+        <DaoCard key={dao.id} {...dao} />
+      ))}
+      {(daoData.length == 0 || !hasPersonalHub()) && (
+        <>
+          <h2>Create Personal Hub</h2>
+          <p>The fun starts with your own personal hub.</p>
+          <LinkButton to={`/summon/personal`}>
+            <Button variant="outline">Summon a Personal Hub</Button>
+          </LinkButton>
+        </>
+      )}
+    </InsideConatiner>
+  );
 };

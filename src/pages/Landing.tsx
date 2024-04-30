@@ -1,4 +1,3 @@
-
 import { useDHConnect } from "@daohaus/connect";
 import styled from "styled-components";
 import { BiColumnLayout, Button, Link, ParSm } from "@daohaus/ui";
@@ -19,10 +18,14 @@ const ExternalLinkButton = styled(Link)`
   }
 `;
 
+const InsideConatiner = styled.div`
+  > * {
+    margin-bottom: 2rem;
+  }
+`;
 
 const Landing = () => {
   const { chainId, isConnected, address } = useDHConnect();
-
 
   return (
     <>
@@ -30,20 +33,20 @@ const Landing = () => {
         <BiColumnLayout
           subtitle="Welcome to the DIN summoner"
           title="DIN- Decentralized Information Netowrk"
-          left={(
-            <div>
+          left={
+            <InsideConatiner>
               <h1>Create Topic Hub</h1>
               <p>
-                Create a topic hub to organize and fund projects, events, and more.
+                Create a topic hub to organize and fund projects, events, and
+                more.
               </p>
               <LinkButton to="/summon/topic">
                 <Button variant="outline">Summon a Topic</Button>
               </LinkButton>
-            </div>
-          )}
-          right={(
-            <div>
-
+            </InsideConatiner>
+          }
+          right={
+            <InsideConatiner>
               <UserDaos />
 
               <ExternalLinkButton
@@ -51,37 +54,30 @@ const Landing = () => {
                 target="_blank"
                 href={`${ADMIN_URL}`}
               >
-
                 <ParSm>Continue To Topic List</ParSm>
               </ExternalLinkButton>
-            </div>
-          )}
+            </InsideConatiner>
+          }
         />
-
-      ) :
-        (
-          <div>
-            {!isConnected && (<><h1>Not Connected</h1>
-              <p>
-                Please connect your wallet to continue.
-              </p>
+      ) : (
+        <InsideConatiner>
+          {!isConnected && (
+            <>
+              <h1>Not Connected</h1>
+              <p>Please connect your wallet to continue.</p>
             </>
-            )}
-            {isConnected && (
-              <h1>Unsupported Network. Switch to sepolia</h1>
-            )}
-            <ExternalLinkButton
-              showExternalIcon={true}
-              target="_blank"
-              href={`${ADMIN_URL}`}
-            >
-              Continue To Topic List
-            </ExternalLinkButton>
-          </div>)
-      }
-
+          )}
+          {isConnected && <h1>Unsupported Network. Switch to sepolia</h1>}
+          <ExternalLinkButton
+            showExternalIcon={true}
+            target="_blank"
+            href={`${ADMIN_URL}`}
+          >
+            Continue To Topic List
+          </ExternalLinkButton>
+        </InsideConatiner>
+      )}
     </>
-
   );
 };
 
