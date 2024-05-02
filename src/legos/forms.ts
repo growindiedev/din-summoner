@@ -17,7 +17,7 @@ export const APP_FORM: Record<string, CustomFormLego> = {
     requiredFields: {
       daoName: true,
       description: true,
-      collectorPrice: true
+      collectorPrice: true,
     },
     log: true,
     tx: APP_TX.CURATOR_NFT_SUMMON,
@@ -58,9 +58,10 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       },
       {
         id: "article",
-        type: "markdownField",
+        type: "mdxEditor",
         label: "Introduction",
-        placeholder: "# We Currate and Collect....\n## We are the future of media.\nThis is a markdown editor.",
+        placeholder:
+          "# We Currate and Collect....\n## We are the future of media.\nThis is a markdown editor.",
         info: "Type something to kick it off.",
       },
       APP_FIELD.SALT_NONCE_FIELD,
@@ -71,31 +72,28 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       {
         id: "parentCheckGateRender",
         type: "checkGateRender",
-        gateLabel:
-          "Is this a sub dao of another DAO? (optional)",
-        clearFieldIdsOnUnchecked: [
-          "parentDAOAddress"
-        ],
+        gateLabel: "Is this a sub dao of another DAO? (optional)",
+        clearFieldIdsOnUnchecked: ["parentDAOAddress"],
         components: [
-          
-      {
-        id: "parentDAOSegment",
-        type: "formSegment",
-        title: "Sub DAO",
-        description:
-          "If you are creating a sub DAO, enter the parent DAO address here.",
-        fields: [
           {
-            id: "parentDAOAddress",
-            type: "input",
-            label: "Parent DAO Address",
-          }
+            id: "parentDAOSegment",
+            type: "formSegment",
+            title: "Sub DAO",
+            description:
+              "If you are creating a sub DAO, enter the parent DAO address here.",
+            fields: [
+              {
+                id: "parentDAOAddress",
+                type: "input",
+                label: "Parent DAO Address",
+              },
+            ],
+          },
         ],
       },
     ],
-  }
-]
-}};
+  },
+};
 
 // {
 //   id: "supplyAllocationSegment",
